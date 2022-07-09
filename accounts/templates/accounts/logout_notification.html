@@ -1,0 +1,32 @@
+{% load static %}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no " data-bs-dismiss="modal">No</button>
+                    <button type="button" id="logoutBtn" class="btn  btn--yes btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#logoutBtn').on('click', function() {
+            setTimeout(function() {
+                window.location.href = "{% url 'accounts:logout' %}"
+            }, 2100);
+            //$('#logoutLink').attr('href', `"{% url 'accounts:logout' %}"`);
+            $('.fade').fadeTo(2000, 1, function() {
+                $(this).fadeOut(1000);
+            });
+        })
+    });
+</script>
+{% endblock scripts %}
