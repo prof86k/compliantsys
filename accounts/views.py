@@ -1,5 +1,4 @@
 from http.client import HTTPResponse
-from datetime import date, datetime
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,logout,authenticate
 from django.http import JsonResponse,HttpRequest
@@ -11,6 +10,7 @@ from complaintsApi import models as cmdl
 
 # Create your views here.
 def users_login(request: HttpRequest) -> HTTPResponse:
+    '''login of users'''
     if request.method == 'POST':
         form = fms.UserLoginForm(data=request.POST)
         if form.is_valid():
@@ -21,15 +21,20 @@ def users_login(request: HttpRequest) -> HTTPResponse:
                 login(request,user=user)
                 logged_in_user = get_object_or_404(mdl.User,username=request.user)
                 if logged_in_user.is_it_support:
-                    pass
+                    #return to the main dashboard
+                    return redirect('accounts:dashboard')
                 elif logged_in_user.is_student:
+                    #return to the student dashboard
                     return redirect('accounts:student_dashboard')
                 elif logged_in_user.is_hod:
-                    pass
+                    #return to the hod dashboard
+                    return redirect('accounts:hod_dashboard')
                 elif logged_in_user.is_dean:
-                    pass
+                    #return to the dean dashboard
+                    return redirect('accounts:dean_dashboard')
                 elif logged_in_user.is_registry:
-                    pass
+                    #return to the registry
+                    return redirect('accounts:registry_dashboard')
             else:
                 messages.error(request,'User or password is invalid!.')
     else:
