@@ -1,0 +1,55 @@
+{% extends "accounts/base.html" %}
+<!--  -->
+{% block title %} send complaints {% endblock title %}
+<!--  -->
+{% block headerTite %} Send Complaints {% endblock headerTite %}
+<!--  -->
+{% block linkForm %}
+<a href="{% url 'complaints:student_complaints' %}" class="align-items-center btn btn-theme">
+    <span class="lnr lnr-eye"></span>View Complaints
+</a>
+{% endblock linkForm %}
+<!--  -->
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% for message in messages %}
+        <div class="container-fluid">
+            <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    
+                </button>
+                <!--  -->
+                {{message}}
+            </div>
+        </div>
+        {% endfor %}
+        <form action="{% url 'complaints:send_complaints' %}" method="post">
+            {% csrf_token %}
+            <div class="row mb-5">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <label for="title">{{form.title.label}}</label>
+                        <!--  -->
+                        {{form.title}}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-5">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <label for="description">{{form.description.label}}</label>
+                        <!--  -->
+                        {{form.description}}
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-md-4 offset-md-10">
+                    <button class="btn btn-success btn-lg" type="submit">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

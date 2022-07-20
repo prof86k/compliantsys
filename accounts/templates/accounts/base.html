@@ -53,7 +53,7 @@
     <link rel="stylesheet" type="text/css" href="{% static '/assets/css/responsive.css' %}">
 </head>
 
-<body>
+<body style="background-color:#335a5a;">
     <!-- tap on top start -->
     <div class="tap-top">
         <span class="lnr lnr-chevron-up"></span>
@@ -69,11 +69,28 @@
         <!-- Page Body Start-->
         <div class="page-body-wrapper">
             <!-- Page Sidebar Start-->
+            {% if request.user.is_it_support %}
+            <!--  -->
             {% include "accounts/sidebar.html" %}
+            <!--  -->
+            {% elif request.user.is_student %}
+            <!--  -->
+            {% include "accounts/student_sidebar.html" %}
+            <!--  -->
+            {% endif %}
             <!-- Page Sidebar Ends-->
-
+            <!-- page title -->
+            <!-- end of page title -->
             <!-- index body start -->
             <div class="page-body">
+                <div class="title-header title-header-1">
+                    <h5>
+                        {% block headerTitle %} {% endblock headerTitle %}
+                    </h5>
+                    <form class="d-inline-flex">
+                        {% block linkForm %} {% endblock linkForm %}
+                    </form>
+                </div>
                 <!-- Container-fluid Starts -->
                 {% block content %} {% endblock content %}
                 <!-- Container-fluid Ends-->

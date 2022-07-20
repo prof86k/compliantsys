@@ -12,6 +12,6 @@ class ComplaintCreationForm(forms.ModelForm):
             }),
             'description':forms.Textarea(attrs={
                 'class':'form-control','placeholder':'Enter the description of your complaint ...',
-                'required':True,
+                'required':True,'rows':3,
             })
         }

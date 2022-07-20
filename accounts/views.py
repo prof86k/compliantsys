@@ -1,4 +1,5 @@
 from http.client import HTTPResponse
+from datetime import date, datetime
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,logout,authenticate
 from django.http import JsonResponse,HttpRequest
@@ -18,11 +19,11 @@ def users_login(request: HttpRequest) -> HTTPResponse:
             user = authenticate(request,username=username,password=password)
             if user is not None:
                 login(request,user=user)
-                logged_in_user = get_object_or_404(mdl.User,username=request.user).first()
+                logged_in_user = get_object_or_404(mdl.User,username=request.user)
                 if logged_in_user.is_it_support:
                     pass
                 elif logged_in_user.is_student:
-                    pass
+                    return redirect('accounts:student_dashboard')
                 elif logged_in_user.is_hod:
                     pass
                 elif logged_in_user.is_dean:
@@ -45,13 +46,17 @@ def log_out_user(request: HttpRequest) -> HTTPResponse:
 def dashboard(request: HttpRequest) -> HTTPResponse:
     users = mdl.User.objects.count()
     complaints = cmdl.Complaint.objects.count()
-    faculties = mdl.Faculty.objects.count()
-    departments = mdl.Department.objects.count()
-    programmes = mdl.Programme.objects.count()
+    new_complaints = cmdl.Complaint.current_model_count()
+    resolved_complaints = cmdl.Complaint.objects.filter(
+        hod_solve=True,
+        dean_solve=True,
+        registry_solve=True,
+        support_repond=True
+    ).count()
     context = {
         'users':users,'complaints':complaints,
-        'faculties':faculties,'departments':departments,
-        'programmes':programmes,
+        'resolved_complaints':resolved_complaints,
+        'new_complaints':new_complaints
         }
     return render(request,'accounts/admins/dashboard.html',context)
 
@@ -148,7 +153,45 @@ def ajax_programmes_upload(request: HttpRequest) -> JsonResponse:
     return JsonResponse()
 
 def create_user(request: HttpRequest) -> HTTPResponse:
-    context = {}
+    users = mdl.User.objects.order_by('-date_joined').all()
+    if request.method == "POST":
+        form = fms.CreateNewUserForm(request.POST,files=request.FILES)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = "com2022"
+            email = form.cleaned_data.get('email')
+            profile_picture = form.cleaned_data.get('profile_picture')
+            hod = form.cleaned_data.get('hod')
+            student = form.cleaned_data.get('student')
+            dean = form.cleaned_data.get('dean')
+            registry = form.cleaned_data.get('registry')
+            it_support = form.cleaned_data.get('it_support')
+            try:
+                new_user = mdl.User(username=username,email=email,profile_picture=profile_picture,is_hod=hod,
+                is_student=student,is_dean=dean,is_registry=registry,is_it_support=it_support)
+                new_user.set_password(password)
+                new_user.save()
+                if new_user.is_student:
+                    mdl.Student.objects.create(user=new_user)
+                elif new_user.is_hod:
+                    mdl.Student.objects.create(user=new_user)
+                elif new_user.is_dean:
+                    mdl.Dean.objects.create(user=new_user)
+                elif new_user.is_registry:
+                    mdl.Registry.objects.create(user=new_user)
+                elif new_user.is_it_support:
+                    mdl.Itsupport.objects.create(user=new_user)
+                messages.success(request,message ="User created")
+                return redirect("accounts:create_user")
+            except Exception as e:
+                messages.error(request,f"Some Fields Are Not Valid {e}")
+                return redirect("accounts:create_user")
+        else:
+            messages.error(request,f"Some Fields Are Not Valid {form.errors}")
+            return redirect("accounts:create_user")                
+    else:
+        form = fms.CreateNewUserForm()
+    context = {'form':form,'users':users}
     return render(request,'accounts/admins/create_user.html',context)
 
 def ajax_user_upload(request:HttpRequest) -> JsonResponse:
@@ -156,6 +199,13 @@ def ajax_user_upload(request:HttpRequest) -> JsonResponse:
         pass
     context = {}
     return JsonResponse
+
+def show_all_users(request:HttpRequest) -> HTTPResponse:
+    users = mdl.User.objects.order_by('-date_joined').all()
+    context = {
+        'users': users
+    }
+    return render(request,'accounts/admins/users.html',context)
 
 def edit_faculty(request: HttpRequest,faculty_id) -> HTTPResponse:
     context = {}
@@ -171,8 +221,13 @@ def edit_programme(request: HttpRequest,programme_id) -> HTTPResponse:
 
 # =========================== student site ================================
 def student_dashboard(request: HttpRequest) -> HTTPResponse:
-    context = {}
-    return render(request,'accounts/students/dashboard.html',context)
+    complaints = cmdl.Complaint.objects.filter(complainer=request.user).count()
+    current_complaints = cmdl.Complaint.user_current_model_count(request.user)
+    resolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=True,complainer=request.user).count()
+    unresolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=False,complainer=request.user).count()
+    context = {'complaints':complaints,'new_complains':current_complaints,
+                'resolved':resolved_complaints,'unresolved':unresolved_complaints}
+    return render(request,'accounts/student/dashboard.html',context)
 
 def student_profile(request: HttpRequest ) -> HTTPResponse:
     context = {}

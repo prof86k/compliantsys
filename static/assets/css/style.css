@@ -3542,7 +3542,7 @@ strong~p {
 }
 
 .alert-info {
-    background-color: rgba(169, 39, 249, 0.8);
+    background-color: rgba(16, 39, 29, 0.8);
     border-color: rgba(169, 39, 249, 0.9);
     color: #fff
 }
@@ -25235,7 +25235,7 @@ footer {
 
 .landing-page .page-body-wrapper {
     min-height: 100vh;
-    background: #eaf4ff;
+    background: rgba(227, 235, 241, 0.5);
     overflow: hidden
 }
 

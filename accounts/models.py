@@ -9,8 +9,10 @@ class User(AbstractUser):
     is_dean = models.BooleanField(default=False)
     is_registry = models.BooleanField(default=False)
     is_it_support = models.BooleanField(default=False)
-    profile_picture = models.ImageField(verbose_name='Profile Picture:',upload_to='images/profile_pics/%Y/%M/%d',null=True)
-    full_name = models.CharField(verbose_name='Full Name:',max_length=255, blank=True,null=True)
+    profile_picture = models.ImageField(verbose_name='Profile Picture:',
+    upload_to='images/profile_pics/%Y/%M/%d',null=True)
+    full_name = models.CharField(verbose_name='Full Name:',max_length=255, 
+    blank=True,null=True)
     gender = models.CharField(verbose_name='Gender:',max_length=255, blank=True,null=True)
     phone = models.CharField(verbose_name="Phone:",max_length=255, blank=True,null=True)
 
@@ -90,7 +92,7 @@ class Dean(models.Model):
         return f'{self.user.username}'
 
 
-class Register(models.Model):
+class Registry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='registry_users')
 
     class Meta:

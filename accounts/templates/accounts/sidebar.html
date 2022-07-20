@@ -43,7 +43,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="all-users.html">All users</a>
+                                <a href="{% url 'accounts:users' %}">All users</a>
                             </li>
                             <li>
                                 <a href="{% url 'accounts:create_user' %}">Add new user</a>
@@ -121,14 +121,11 @@
                     <li class="sidebar-list">
                         <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                             <i data-feather="align-left"></i>
-                            <span>Menus</span>
+                            <span>Complaints</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="menu-lists.html">Menu Lists</a>
-                            </li>
-                            <li>
-                                <a href="create-menu.html">Create Menu</a>
+                                <a href="menu-lists.html">Complaints Lists</a>
                             </li>
                         </ul>
                     </li>

@@ -15,6 +15,7 @@ urlpatterns = [
     path('upload-departments',vi.ajax_departments_upload,name='upload_departments'),
     path('create-programme',vi.create_programme,name='create_programme'),
     path('upload-programmes',vi.ajax_programmes_upload,name='upload_programme'),
+    path('show-users',vi.show_all_users,name='users'),
     path('create-user',vi.create_user,name='create_user'),
     path('upload-users',vi.ajax_user_upload,name='upload_users'),
     # =========================== Main  admin Edit option ========================================

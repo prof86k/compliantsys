@@ -1,0 +1,106 @@
+{% extends "accounts/base.html" %}
+<!--  -->
+{% block title %} show users {% endblock title %}
+<!--  -->
+{% block headerTitle %}Users {% endblock headerTitle %}
+<!--  -->
+{% block linkForm %}
+<a href="{% url 'accounts:create_user' %}" class="align-items-center btn btn-theme">
+    <i data-feather="plus-square"></i>Add New
+</a>
+{% endblock linkForm %}
+<!--  -->
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div>
+                        <div class="table-responsive table-desi">
+                            <table class="user-table table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="form-check user-checkbox">
+                                            <input class="checkbox_animated" type="checkbox" value="" id="checkall">
+                                        </span>User</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Last Login</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td>
+                                            <div class="form-check user-checkbox">
+                                                <input class="checkbox_animated check-it" type="checkbox" value="{{user.id}}" id="flexCheckDefault">
+                                            </div>
+                                            <span>
+                                                <img src="{{user.profile_picture.url}}" alt="users">
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0)">
+                                                <span class="d-block ">{{user.username}}</span>
+                                            </a>
+                                        </td>
+                                        <td>{{user.email}}</td>
+                                        <td>{{user.last_login}}</td>
+                                        <td>
+                                            <ul>
+                                                <li>
+                                                    <a href="order-detail.html">
+                                                        <span class="lnr lnr-eye"></span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0)">
+                                                        <span class="lnr lnr-pencil"></span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0)">
+                                                        <span class="lnr lnr-trash"></span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagination-box">
+                    <nav class="ms-auto me-auto " aria-label="...">
+                        <ul class="pagination pagination-primary">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="javascript:void(0)">1 </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- All User Table Ends-->
+
+{% endblock content %}

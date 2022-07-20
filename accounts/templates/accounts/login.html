@@ -35,6 +35,7 @@
                 <div class="login-section">
                     <div class="materialContainer">
                         <div class="box">
+                            <h2 class="text-center mb-5">Login</h2>
                             {% for message in messages %}
                             <div class="container-fluid">
                                 <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
@@ -44,32 +45,41 @@
                                 </div>
                             </div>
                             {% endfor %}
-                            <h2>Login</h2>
-                            <div class="input">
-                                <label for="name">Username</label>
-                                <input type="text" name="name" id="name">
-                                <span class="spin"></span>
-                            </div>
+                            <form action="{% url 'accounts:login' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="name">{{form.username.label}}</label>
+                                            <!--  -->
+                                            {{form.username}} <span class="spin"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="Password">{{form.password.label}}</label>
+                                            <!--  -->
+                                            {{form.password}}
+                                            <span class="spin"></span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="input">
-                                <label for="pass">Password</label>
-                                <input type="password" name="pass" id="pass">
-                                <span class="spin"></span>
-                            </div>
-
-                            <a href="forgot-password.html" class="pass-forgot">Forgot your password?</a>
-
-                            <div class="button login">
-                                <button onclick="location.href = '/dashboard';">
-                                    <span>Log In</span>
-                                    <i class="fa fa-check"></i>
-                                </button>
-                            </div>
-
+                                <div class="button login">
+                                    <button type="submit">Log In
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                    <!-- <button onclick="location.href = '/dashboard';"> -->
+                                    <!-- <span>Log In</span> -->
+                                    <!-- </button> -->
+                                </div>
+                            </form>
                             <p class="sign-category">
-                                <span>Or sign in with</span>
+                                <span>Or</span>
                             </p>
-                            <p>Not a member? <a href="sign-up.html" class="theme-color">Sign up now</a></p>
+                            <a href="#" class="theme-color">Forgot your password?</a>
                         </div>
                     </div>
                 </div>

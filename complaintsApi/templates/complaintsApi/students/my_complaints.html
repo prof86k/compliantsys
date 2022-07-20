@@ -1,0 +1,113 @@
+{% extends "accounts/base.html" %}
+<!--  -->
+{% block title %} my complaints {% endblock title %}
+<!--  -->
+{% block headerTitle %} My Complaints {% endblock headerTitle %}
+<!--  -->
+{% block linkForm %}
+<a href="{% url 'complaints:send_complaints' %}" class="align-items-center btn btn-theme">
+    <i data-feather="plus-square"></i>Add New
+
+</a>
+{% endblock linkForm %}
+<!--  -->
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div>
+                        <div class="table-responsive table-desi">
+                            <table class="user-table table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="form-check user-checkbox">
+                                                No.
+                                        </span>Title</th>
+                                        <th>Date Created</th>
+                                        <th>Date Updated</th>
+                                        <th>Status</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for complaint in complaints %}
+                                    <tr>
+                                        <td>
+                                            <div class="form-check user-checkbox">
+                                                {{forloop.counter}} </div>
+                                            <span class="text-center">
+                                                {{complaint.title}}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0)">
+                                                <span class="d-block ">{{complaint.date_created}}</span>
+                                            </a>
+                                        </td>
+                                        <td>{{complaint.date_updated}}</td>
+                                        <td>
+                                            {% if complaint.resolved_complaint %}
+                                            <a class="text-success">Resolved</a>
+                                            <!--  -->
+                                            {% else %}
+                                            <a class="text-danger">Unresolved</a>
+                                            <!--  -->
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <ul>
+                                                <li>
+                                                    <a href="{% url 'complaints:view_detailed' complaint_id=complaint.id %}">
+                                                        <span class="lnr lnr-eye"></span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'complaints:edit_complaint' complaint_id=complaint.id %}">
+                                                        <span class="lnr lnr-pencil"></span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'complaints:edit_complaint' complaint_id=complaint.id %}">
+                                                        <span class="lnr lnr-trash"></span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagination-box">
+                    <nav class="ms-auto me-auto " aria-label="...">
+                        <ul class="pagination pagination-primary">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="javascript:void(0)">1 </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- All User Table Ends-->
+{% endblock content %}

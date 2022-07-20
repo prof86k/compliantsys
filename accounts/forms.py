@@ -41,7 +41,7 @@ class CreateNewUserForm(forms.ModelForm):
     student = forms.BooleanField(label='Student:',required=False,widget=forms.CheckboxInput(attrs={
     'class':'form-check-input'
     }))
-    hod = forms.BooleanField(label='HOB:',required=False,widget=forms.CheckboxInput(attrs={
+    hod = forms.BooleanField(label='HOD:',required=False,widget=forms.CheckboxInput(attrs={
         'class':'form-check-input'
     }))
     registry = forms.BooleanField(label='Registry:',required=False,widget=forms.CheckboxInput(attrs={
@@ -50,14 +50,14 @@ class CreateNewUserForm(forms.ModelForm):
     it_support = forms.BooleanField(label='IT Support:',required=False,widget=forms.CheckboxInput(attrs={
         'class':'form-check-input'
     }))
+    username = forms.CharField(label="Username:",widget=forms.TextInput(attrs={
+    'class':'form-control','autofocus':True,'placeholder':'Enter the student ID/ Staff ID....'
+    }))
 
     class Meta:
         model = mdl.User
-        fields = ['username','email','profile_picture']
+        fields = ['email','profile_picture']
         widgets = {
-            'username':forms.TextInput(attrs={
-                'class':'form-control','autofocus':True,'placeholder':'enter the student ID/ Staff ID....'
-            }),
             'email':forms.EmailInput(attrs={
                 'class':'form-control','placeholder':'Enter email','blank':False,
             }),
