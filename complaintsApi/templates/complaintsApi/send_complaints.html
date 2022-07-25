@@ -5,7 +5,7 @@
 {% block headerTite %} Send Complaints {% endblock headerTite %}
 <!--  -->
 {% block linkForm %}
-<a href="{% url 'complaints:student_complaints' %}" class="align-items-center btn btn-theme">
+<a href="{% url 'complaints:my_complaints' %}" class="align-items-center btn btn-theme">
     <span class="lnr lnr-eye"></span>View Complaints
 </a>
 {% endblock linkForm %}
@@ -14,14 +14,12 @@
 <div class="container-fluid">
     <div class="row">
         {% for message in messages %}
-        <div class="container-fluid">
-            <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                     
                 </button>
-                <!--  -->
-                {{message}}
-            </div>
+            <!--  -->
+            {{message}}
         </div>
         {% endfor %}
         <form action="{% url 'complaints:send_complaints' %}" method="post">

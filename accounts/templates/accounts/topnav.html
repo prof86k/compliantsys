@@ -15,7 +15,7 @@
             <div class="form-group w-100">
                 <div class="Typeahead Typeahead--twitterUsers">
                     <div class="u-posRelative">
-                        <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search Voxo .." name="q" title="" autofocus>
+                        <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search here .." name="q" title="" autofocus>
                         <i class="close-search" data-feather="x"></i>
                         <div class="spinner-border Typeahead-spinner" role="status">
                             <span class="sr-only">Loading...</span>
@@ -37,15 +37,9 @@
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
                         <li>
-                            <a href="profile-setting.html">
+                            <a href="{% url 'accounts:profile' user_id=request.user.id %}">
                                 <i data-feather="settings"></i>
                                 <span>Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="profile-setting.html">
-                                <i data-feather="settings"></i>
-                                <span>Settings</span>
                             </a>
                         </li>
                         <li>

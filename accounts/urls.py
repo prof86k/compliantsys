@@ -7,7 +7,7 @@ urlpatterns = [
     path('',vi.users_login,name='login'),
     path('logout',vi.log_out_user,name='logout'),
     path('dashboard',vi.dashboard,name='dashboard'),
-    path('profile',vi.profile,name='profile'),
+    path('profile/<int:user_id>',vi.profile,name='profile'),
     # ========================= Main admin create option =========================================
     path('create-faculty',vi.create_faculty,name='create_faculty'),
     path('upload-faculties',vi.ajax_upload_faculties,name='upload_faculties'),

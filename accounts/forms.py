@@ -56,13 +56,16 @@ class CreateNewUserForm(forms.ModelForm):
 
     class Meta:
         model = mdl.User
-        fields = ['email','profile_picture']
+        fields = ['email','profile_picture','phone']
         widgets = {
             'email':forms.EmailInput(attrs={
                 'class':'form-control','placeholder':'Enter email','blank':False,
             }),
             'profile_picture':forms.ClearableFileInput(attrs={
                 'class':'form-control','required':False,
+            }),
+            'phone':forms.TextInput(attrs={
+                'class':'form-control','placeholder':'Enter Phone Number...','type':'tel'
             })
         }
 
@@ -115,3 +118,59 @@ class UserLoginForm(forms.Form):
     password = forms.CharField(label='Password:',required=True,widget=forms.PasswordInput(attrs={
         'class':'form-control','placeholder':'Password...'
     }))
+
+class UserProfileForm(forms.ModelForm):
+    programme = forms.ChoiceField(label="Programme:",required=False,widget=forms.Select(attrs={
+        'class':'form-control'
+    }),choices=[(programme,programme.title) for index,programme in enumerate(mdl.Programme.objects.all())])
+    
+    department = forms.ChoiceField(label='Department:',required=False,widget=forms.Select(attrs={
+        'class':'form-control'
+    }),choices=[(department,department.title) for index,department in enumerate(mdl.Department.objects.all())])
+    
+    faculty = forms.ChoiceField(label='Faculty:',required=False,widget=forms.Select(attrs={
+        'class':'form-control',
+    }),choices=[(faculty,faculty) for index, faculty in enumerate(mdl.Faculty.objects.all())])
+    
+    class Meta:
+        model = mdl.User
+        fields = [
+            'full_name','email','gender','profile_picture','phone',
+            'is_dean','is_student','is_hod','is_registry','is_it_support'
+        ]
+        GENDER = (('',  '...'),('male','Male'),('female','Female'))
+        widgets = {
+            'full_name':forms.TextInput(attrs={
+            'class':'form-control','placeholder':'Enter fullname ...',
+            'required':False,'autofocus':True,
+            }),
+            'email':forms.EmailInput(attrs={
+                'class':'form-control','required':True,
+                'placeholder':'Enter email...','autofocus':True,
+            }),
+            'gender':forms.Select(attrs={
+                'class':'form-control', 'required':True,
+            },choices=GENDER),
+            'profile_picture':forms.ClearableFileInput(attrs={
+                'class':'form-control','required':False
+            }),
+            'phone':forms.TextInput(attrs={
+                'class':'form-control','placeholder':'Enter Phone Number...','type':'tel'            
+                
+            }),
+            'is_dean':forms.CheckboxInput(attrs={
+            'class':'form-check-input'
+            }),
+            'is_student':forms.CheckboxInput(attrs={
+            'class':'form-check-input'
+            }),
+            'is_hod':forms.CheckboxInput(attrs={
+                'class':'form-check-input'
+            }),
+            'is_registry':forms.CheckboxInput(attrs={
+                'class':'form-check-input'
+            }),
+            'is_it_support':forms.CheckboxInput(attrs={
+                'class':'form-check-input'
+            }),
+        }

@@ -27,14 +27,25 @@ class Complaint(models.Model):
     @classmethod
     def current_model_count(cls):
         '''return the number of complaints made today by all users'''
-        return len([complaint.date_updated.date==datetime.today() for complaint in cls.objects.filter(resolved_complaint=False).all()])
+        return len([
+                complaint
+                for complaint in cls.objects.filter(resolved_complaint=False).all() 
+                if complaint.date_updated.date() == datetime.today().date()
+            ])
 
     @classmethod
     def current_complaints(cls):
         '''return all the current complaints'''
-        return [complaint.date_update.date==datetime.today() for complaint in cls.objects.filter(resolved_complaint=False).all()]
+        return [
+                complaint for complaint in cls.objects.filter(resolved_complaint=False).all() 
+                if complaint.date_updated.date() == datetime.today().date()
+            ]
 
     @classmethod
     def user_current_model_count(cls,user):
         '''return the number of complaints made by a particular user'''
-        return len([complaint.date_updated.date==datetime.today() for complaint in cls.objects.filter(complainer=user).all()])
+        return len([
+                complaint
+                for complaint in cls.objects.filter(complainer=user).all() 
+                if complaint.date_updated.date() == datetime.today().date()
+            ])

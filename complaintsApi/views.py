@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
+from django.http import HttpResponse,JsonResponse,HttpRequest
 from . import froms as fms
 from . import models as mdl
 from accounts import models as acmdl
@@ -76,7 +77,7 @@ def student_send_message(request):
     context = {}
     return render(request,'complaintsApi/students/send_message.html',context)
 
-def student_complaints(request):
+def my_complaints(request):
     complaints = mdl.Complaint.objects.filter(complainer=request.user).order_by('-date_updated').all()
     context = {'complaints':complaints}
     return render(request,'complaintsApi/students/my_complaints.html',context)
@@ -98,6 +99,12 @@ def edit_student_complaint(request,complaint_id):
         form = fms.ComplaintCreationForm(instance=complaint)
     context = {'complaint':complaint,'form':form}
     return render(request,'complaintsApi/students/edit_complaints.html',context)
+
+def delete_complaint(request:HttpRequest, complaint_id:int) -> HttpResponse:
+    complaint = get_object_or_404(mdl.Complaint,id=complaint_id,complainer=request.user)
+    complaint.delete()
+    messages.success(request,'Complaints Deleted Successfully.')
+    return redirect('complaints:my_complaints')
 
 def student_complaints_responds(request):
     context = {}

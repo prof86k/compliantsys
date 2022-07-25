@@ -19,22 +19,23 @@ def users_login(request: HttpRequest) -> HTTPResponse:
             user = authenticate(request,username=username,password=password)
             if user is not None:
                 login(request,user=user)
-                logged_in_user = get_object_or_404(mdl.User,username=request.user)
-                if logged_in_user.is_it_support:
+                if user.is_it_support:
                     #return to the main dashboard
                     return redirect('accounts:dashboard')
-                elif logged_in_user.is_student:
+                elif user.is_student:
                     #return to the student dashboard
                     return redirect('accounts:student_dashboard')
-                elif logged_in_user.is_hod:
+                elif user.is_hod:
                     #return to the hod dashboard
                     return redirect('accounts:hod_dashboard')
-                elif logged_in_user.is_dean:
+                elif user.is_dean:
                     #return to the dean dashboard
                     return redirect('accounts:dean_dashboard')
-                elif logged_in_user.is_registry:
+                elif user.is_registry:
                     #return to the registry
                     return redirect('accounts:registry_dashboard')
+                else:
+                    messages.error(request,'Your Role Is Not Recognised In The System')
             else:
                 messages.error(request,'User or password is invalid!.')
     else:
@@ -44,7 +45,7 @@ def users_login(request: HttpRequest) -> HTTPResponse:
 
 def log_out_user(request: HttpRequest) -> HTTPResponse:
     logout(request)
-    messages.info(request,'You have logged out successfully. Login again to access your dashboard.')
+    messages.info(request,'Login again to access your dashboard.')
     return redirect('accounts:login')   
 
 # ======================== administrators IT support =============================================
@@ -65,9 +66,76 @@ def dashboard(request: HttpRequest) -> HTTPResponse:
         }
     return render(request,'accounts/admins/dashboard.html',context)
 
-def profile(request: HttpRequest) -> HTTPResponse:
-    context = {}
-    return render(request,'accounts/admins/profile.html',context)
+def profile(request: HttpRequest,user_id: int) -> HTTPResponse:
+    user = get_object_or_404(mdl.User,id=user_id)
+    if request.method == 'POST':
+        form = fms.UserProfileForm(instance=user,data=request.POST,files=request.FILES)
+        if form.is_valid():
+            if (user.is_student or user.is_it_support) and (form.cleaned_data.get('is_student')==True):
+                programme = get_object_or_404(mdl.Programme,title=form.cleaned_data.get('programme'))
+                try:
+                    student = get_object_or_404(mdl.Student,user=user)
+                    student.save()
+                except Exception as e:
+                    mdl.Student.objects.create(user=user,programme=programme)
+                form.save()
+                user.is_student = True
+                user.save()
+                messages.success(request,'Update Successfull')
+                return redirect('accounts:profile',user_id=user.id)
+            elif (user.is_hod or user.is_it_support) and (form.cleaned_data.get('is_hod')==True):
+                department = get_object_or_404(mdl.Department,title=form.cleaned_data.get('department'))
+                try:
+                    hod = get_object_or_404(mdl.Hod,user=user)
+                    hod.save()
+                except Exception as e:
+                    mdl.Hod.objects.create(user=user,department=department)
+                form.save()
+                user.is_hod = True
+                user.save()
+                messages.success(request,'Update Successfull')
+                return redirect('accounts:profile',user_id=user.id)
+            elif (user.is_dean or user.is_it_support) and (form.cleaned_data.get('is_dean')==True):
+                faculty = get_object_or_404(mdl.Faculty,title=form.cleaned_data.get('faculty'))
+                try:
+                    dean = get_object_or_404(mdl.Dean,user=user)
+                    dean.save()
+                except Exception as e:
+                    mdl.Dean.objects.create(user=user,faculty=faculty)
+                form.save()
+                user.is_dean = True
+                user.save()
+                messages.success(request,'Update Successfull')
+                return redirect('accounts:profile',user_id=user.id)
+            elif (user.is_registry or user.is_it_support) and (form.cleaned_data.get('is_registry')==True):
+                try:
+                    registry = get_object_or_404(mdl.Registry,user=user)
+                    registry.save()
+                except Exception as e:
+                    mdl.Registry.objects.create(user=user)
+                form.save()
+                user.is_registry = True
+                user.save()
+                messages.success(request,'Update Successfull')
+                return redirect('accounts:profile',user_id=user.id)
+            elif (form.cleaned_data.get('is_it_support')==True):
+                try:
+                    itSupport = get_object_or_404(mdl.Itsupport,user=user)
+                    itSupport.save()
+                except Exception as e:
+                    mdl.Itsupport.objects.create(user=user)
+                form.save()
+                user.is_it_support = True
+                user.save()
+                messages.success(request,'Update Successfull')
+                return redirect('accounts:profile',user_id=user.id)
+        else:
+            messages.error(request,'Some Fields had Errors!')
+            return redirect('accounts:profile',user_id=user.id)
+    else:
+        form = fms.UserProfileForm(instance=user)
+    context = {'user':user,'form':form}
+    return render(request,'accounts/profile.html',context)
 
 def create_faculty(request: HttpRequest) -> HTTPResponse:
     faculties = database_models_query(mdl.Faculty,request.user)
@@ -179,7 +247,7 @@ def create_user(request: HttpRequest) -> HTTPResponse:
                 if new_user.is_student:
                     mdl.Student.objects.create(user=new_user)
                 elif new_user.is_hod:
-                    mdl.Student.objects.create(user=new_user)
+                    mdl.Hod.objects.create(user=new_user)
                 elif new_user.is_dean:
                     mdl.Dean.objects.create(user=new_user)
                 elif new_user.is_registry:
@@ -199,13 +267,13 @@ def create_user(request: HttpRequest) -> HTTPResponse:
     context = {'form':form,'users':users}
     return render(request,'accounts/admins/create_user.html',context)
 
-def ajax_user_upload(request:HttpRequest) -> JsonResponse:
+def ajax_user_upload(request: HttpRequest) -> JsonResponse:
     if request.is_ajax():
         pass
     context = {}
     return JsonResponse
 
-def show_all_users(request:HttpRequest) -> HTTPResponse:
+def show_all_users(request: HttpRequest) -> HTTPResponse:
     users = mdl.User.objects.order_by('-date_joined').all()
     context = {
         'users': users
@@ -235,7 +303,8 @@ def student_dashboard(request: HttpRequest) -> HTTPResponse:
     return render(request,'accounts/student/dashboard.html',context)
 
 def student_profile(request: HttpRequest ) -> HTTPResponse:
-    context = {}
+    student = get_object_or_404(mdl.Student,user=request.user)
+    context = {'student':student}
     return render(request,'accounts/student/profile.html',context)
 
 # =========================== HOD site ========================

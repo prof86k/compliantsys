@@ -1,0 +1,189 @@
+{% extends "accounts/base.html" %}
+<!--  -->
+{% block title %} profile {% endblock title %}
+<!--  -->
+{% block headerTitle %} Profile {% endblock headerTitle %}
+<!--  -->
+{% block linkForm %}
+<script>
+    document.write(new Date().toUTCString().replace(new Date().toUTCString().substring(17), ""));
+</script>
+{% endblock linkForm %}
+<!--  -->
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        {% for message in messages %}
+        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+            <button class="btn btn-close" data-bs-dismiss="alert" aria-label="Close">
+            </button> {{message}}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xl-12 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{% url 'accounts:profile' user_id=user.id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-header-1">
+                            <h5>User Profile Information</h5>
+                        </div>
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-lg-2 col-md-3 mb-0">{{form.full_name.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.full_name}}
+                            </div>
+                        </div>
+                        {% if request.user.is_student or request.user.is_it_support %}
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-lg-2 col-md-3 mb-0">{{form.programme.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.programme}}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!--  -->
+                        {% if request.user.is_hod or request.user.is_it_support %}
+
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-lg-2 col-md-3 mb-0">{{form.department.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.department}}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!--  -->
+                        {% if request.user.is_dean or request.user.is_it_support %}
+
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-lg-2 col-md-3 mb-0">{{form.faculty.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.faculty}}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-lg-2 col-md-3 mb-0">{{form.phone.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.phone}}
+                            </div>
+                        </div>
+                        <div class="mb-4 row align-items-center">
+                            <label class="form-label-title col-lg-2 col-md-3 mb-0">{{form.gender.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.gender}}
+                            </div>
+                        </div>
+                        <div class="mb-4 row align-items-center">
+                            <label class="col-lg-2 col-md-3 col-form-label form-label-title">{{form.email.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.email}}
+                            </div>
+                        </div>
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-lg-2 col-md-3 col-form-label form-label-title">{{form.profile_picture.label}}</label>
+                            <div class="col-md-9 col-lg-10">
+                                {{form.profile_picture}}
+                            </div>
+                        </div>
+                        {% if request.user.is_it_support %}
+                        <div class="row align-items-center">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-5">
+                                <div class="form-check form-switch">
+                                    {{form.is_dean}} <label for="is_dean" class="ol-form-label form-label-title">{{form.is_dean.label}}</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-check form-switch">
+                                    {{form.is_student}} <label for="is_student" class="ol-form-label form-label-title">{{form.is_student.label}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-lg-5">
+                                <div class="form-check form-switch">
+                                    {{form.is_hod}} <label for="is_hod" class="ol-form-label form-label-title">{{form.is_hod.label}}</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-check form-switch">
+                                    {{form.is_registry}} <label for="is_registry" class="ol-form-label form-label-title">{{form.is_registry.label}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-lg-5">
+                                <div class="form-check form-switch">
+                                    {{form.is_it_support}}
+                                    <label for="is_it_support" class="ol-form-label form-label-title">{{form.is_it_support.label}}</label>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-12 offset-md-10">
+                                <input type="submit" class="btn btn-block btn-success" value="Update" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+<!--  -->
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const hod = document.querySelector("#id_is_hod");
+        const student = document.querySelector("#id_is_student");
+        const dean = document.querySelector("#id_is_dean");
+        const registry = document.querySelector("#id_is_registry");
+        const itSupport = document.querySelector("#id_is_it_support");
+
+        hod.addEventListener('change', (event) => {
+            if (hod.checked) {
+                student.checked = false;
+                dean.checked = false;
+                registry.checked = false;
+                itSupport.checked = false;
+            }
+        });
+        student.addEventListener('change', () => {
+            if (student.checked) {
+                hod.checked = false;
+                dean.checked = false;
+                registry.checked = false;
+                itSupport.checked = false;
+            }
+        });
+        dean.addEventListener('change', () => {
+            if (dean.checked) {
+                hod.checked = false;
+                student.checked = false;
+                registry.checked = false;
+                itSupport.checked = false;
+            }
+        });
+
+        registry.addEventListener('change', () => {
+            if (registry.checked) {
+                hod.checked = false;
+                student.checked = false;
+                dean.checked = false;
+                itSupport.checked = false;
+            }
+        });
+
+        itSupport.addEventListener('change', () => {
+            if (itSupport.checked) {
+                hod.checked = false;
+                student.checked = false;
+                dean.checked = false;
+                registry.checked = false;
+            }
+        });
+    });
+</script>
+{% endblock scripts %}
