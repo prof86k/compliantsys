@@ -78,8 +78,23 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="{% url 'complaints:delete_complaint' complaint_id=complaint.id %}">
+                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop{{complaint.id}}" href="#">
                                                         <span class="lnr lnr-trash"></span>
+                                                        <div class="modal fade" id="staticBackdrop{{complaint.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                            <div class="modal-dialog  modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-body">
+                                                                        <h5 style="color:black" class="modal-title" id="staticBackdropLabel">Delete!!</h5>
+                                                                        <p style="color:black">Are you sure you want to delete this record?</p>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        <div class="button-box">
+                                                                            <a href="#" type="button" class="btn btn--no " data-bs-dismiss="modal">No</a>
+                                                                            <a href="{% url 'complaints:delete_complaint' complaint_id=complaint.id %}" type="button" class="btn  btn--yes btn-primary">Yes</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </a>
                                                 </li>
                                             </ul>

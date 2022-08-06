@@ -35,6 +35,14 @@ class CreateUserAdminForm(UserCreationForm):
 
 class CreateNewUserForm(forms.ModelForm):
     # programme = forms.CharField('Programme',max_length=255,)
+    department = forms.ChoiceField(label='Department:',required=False,widget=forms.Select(attrs={
+        'class':'form-control'
+    }),choices=[(department,department.title) for index,department in enumerate(mdl.Department.objects.all())])
+    
+    faculty = forms.ChoiceField(label='Faculty:',required=False,widget=forms.Select(attrs={
+        'class':'form-control',
+    }),choices=[(faculty,faculty) for index, faculty in enumerate(mdl.Faculty.objects.all())])
+    
     dean = forms.BooleanField(label='Dean:',required=False,widget=forms.CheckboxInput(attrs={
         'class':'form-check-input'
     }))
@@ -141,7 +149,7 @@ class UserProfileForm(forms.ModelForm):
         GENDER = (('',  '...'),('male','Male'),('female','Female'))
         widgets = {
             'full_name':forms.TextInput(attrs={
-            'class':'form-control','placeholder':'Enter fullname ...',
+            'class':'form-control w-100','placeholder':'Enter fullname ...',
             'required':False,'autofocus':True,
             }),
             'email':forms.EmailInput(attrs={

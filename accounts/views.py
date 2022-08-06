@@ -1,6 +1,7 @@
 from http.client import HTTPResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse,HttpRequest
 from django.contrib import messages
 from . import forms as fms
@@ -43,12 +44,14 @@ def users_login(request: HttpRequest) -> HTTPResponse:
     context = {'form':form}
     return render(request, 'accounts/login.html',context)
 
+@login_required
 def log_out_user(request: HttpRequest) -> HTTPResponse:
     logout(request)
     messages.info(request,'Login again to access your dashboard.')
     return redirect('accounts:login')   
 
 # ======================== administrators IT support =============================================
+@login_required()
 def dashboard(request: HttpRequest) -> HTTPResponse:
     users = mdl.User.objects.count()
     complaints = cmdl.Complaint.objects.count()
@@ -65,7 +68,7 @@ def dashboard(request: HttpRequest) -> HTTPResponse:
         'new_complaints':new_complaints
         }
     return render(request,'accounts/admins/dashboard.html',context)
-
+@login_required
 def profile(request: HttpRequest,user_id: int) -> HTTPResponse:
     user = get_object_or_404(mdl.User,id=user_id)
     if request.method == 'POST':
@@ -138,7 +141,7 @@ def profile(request: HttpRequest,user_id: int) -> HTTPResponse:
     return render(request,'accounts/profile.html',context)
 
 def create_faculty(request: HttpRequest) -> HTTPResponse:
-    faculties = database_models_query(mdl.Faculty,request.user)
+    faculties = database_models_query(mdl.Faculty,user=request.user)
     if request.method == 'POST':
         form = fms.FacultyForm(request.POST)
         if form.is_valid():
@@ -156,7 +159,7 @@ def create_faculty(request: HttpRequest) -> HTTPResponse:
     else:
         form = fms.FacultyForm()
     context = {'form':form,'faculties':faculties}
-    return render(request,'accounts/admins/create_faculty.html',context)
+    return render(request,'accounts/components/add_faculty.html',context)
 
 def ajax_upload_faculties(request:HttpRequest) -> JsonResponse:
     if request.is_ajax():
@@ -183,7 +186,7 @@ def create_department(request: HttpRequest) -> HTTPResponse:
     else:
         form = fms.DepartmentForm()
     context = {'form':form,'departments':departments}
-    return render(request,'accounts/admins/create_department.html',context)
+    return render(request,'accounts/components/create_department.html',context)
 
 def ajax_departments_upload(request: HttpRequest) -> HTTPResponse:
     if request.is_ajax():
@@ -196,11 +199,15 @@ def create_programme(request: HttpRequest) -> HTTPResponse:
     if request.method == 'POST':
         form = fms.ProgrammeForm(request.POST)
         if form.is_valid():
+            hod = mdl.Hod.objects.filter(user=request.user,department=mdl.Department.objects.filter(title=form.cleaned_data.get('department')).first()).first()
             new_programme = form.save(commit=False)
             try:
-                new_programme.user = request.user
-                new_programme.save()
-                messages.success(request,'Save operation successfull.')
+                if (hod) or mdl.User.objects.filter(username=request.user.username,is_it_support=True).first():
+                    new_programme.user = request.user
+                    new_programme.save()
+                    messages.success(request,'Save operation successfull.')
+                else:
+                    messages.error(request,'Sorry you can only add a prgramme to your department.')
                 return redirect('accounts:create_programme')
             except Exception as e:
                 messages.error(request,'Save operation failed.')
@@ -210,12 +217,12 @@ def create_programme(request: HttpRequest) -> HTTPResponse:
     else:
         form = fms.ProgrammeForm()
     context = {'form':form,'programmes':programmes}
-    return render(request,'accounts/admins/create_programme.html',context)
+    return render(request,'accounts/components/create_programme.html',context)
 
 def database_models_query(model,user):
     'Query from any models to return the query object'
-    resuts = model.objects.filter(user=user).all()
-    if resuts is None:
+    results = model.objects.filter(user=user).all()
+    if user.is_it_support or results is None:
         results = model.objects.all()
     return results
 
@@ -247,9 +254,11 @@ def create_user(request: HttpRequest) -> HTTPResponse:
                 if new_user.is_student:
                     mdl.Student.objects.create(user=new_user)
                 elif new_user.is_hod:
-                    mdl.Hod.objects.create(user=new_user)
+                    department = get_object_or_404(mdl.Department,title=form.cleaned_data.get('department'))
+                    mdl.Hod.objects.create(user=new_user,department=department)
                 elif new_user.is_dean:
-                    mdl.Dean.objects.create(user=new_user)
+                    faculty = get_object_or_404(mdl.Faculty,title=form.cleaned_data.get('faculty'))
+                    mdl.Dean.objects.create(user=new_user,faculty=faculty)
                 elif new_user.is_registry:
                     mdl.Registry.objects.create(user=new_user)
                 elif new_user.is_it_support:
@@ -265,7 +274,7 @@ def create_user(request: HttpRequest) -> HTTPResponse:
     else:
         form = fms.CreateNewUserForm()
     context = {'form':form,'users':users}
-    return render(request,'accounts/admins/create_user.html',context)
+    return render(request,'accounts/components/create_user.html',context)
 
 def ajax_user_upload(request: HttpRequest) -> JsonResponse:
     if request.is_ajax():
@@ -280,6 +289,12 @@ def show_all_users(request: HttpRequest) -> HTTPResponse:
     }
     return render(request,'accounts/admins/users.html',context)
 
+def delete_user(request: HttpRequest,user_id:int) -> HTTPResponse:
+    user = get_object_or_404(mdl.User,id=user_id)
+    user.delete()
+    messages.success(request,'Record Deleted Successfully.')
+    return redirect('accounts:users')
+
 def edit_faculty(request: HttpRequest,faculty_id) -> HTTPResponse:
     context = {}
     return render(request,'accounts/admins/edit_faculty.html',context)
@@ -292,12 +307,60 @@ def edit_programme(request: HttpRequest,programme_id) -> HTTPResponse:
     context = {}
     return render(request,'accounts/admins/edit_programme.html',context)
 
+def delete_faculty(request:HttpRequest,faculty_id:int) -> HTTPResponse:
+    try:
+        faculty = get_object_or_404(mdl.Faculty,user=request.user,id=faculty_id)
+    except Exception as e:
+        if get_object_or_404(mdl.User,username=request.user.username,is_it_support=True):
+            faculty = get_object_or_404(mdl.Faculty,id=faculty_id)
+        else:
+            messages.success(request,"Delete Operation Denied!")
+            return redirect('accounts:create_faculty')
+    finally:
+        faculty.delete()
+        messages.success(request,"Delete Operation successfull")
+        return redirect('accounts:create_faculty')
+
+def delete_programme(request:HttpRequest,programme_id:int) -> HTTPResponse:
+    try:
+        faculty = get_object_or_404(mdl.Programme,user=request.user,id=programme_id)
+    except Exception as e:
+        if get_object_or_404(mdl.User,username=request.user.username,is_it_support=True):
+            faculty = get_object_or_404(mdl.Programme,id=programme_id)
+        else:
+            messages.success(request,"Delete Operation Denied!")
+            return redirect('accounts:create_programme')
+    finally:
+        faculty.delete()
+        messages.success(request,"Delete Operation successfull")
+        return redirect('accounts:create_programme')
+
+def delete_department(request:HttpRequest,department_id:int) -> HTTPResponse:
+    try:
+        faculty = get_object_or_404(mdl.Department,user=request.user,id=department_id)
+    except Exception as e:
+        if get_object_or_404(mdl.User,username=request.user.username,is_it_support=True):
+            faculty = get_object_or_404(mdl.Department,id=department_id)
+        else:
+            messages.success(request,"Delete Operation Denied!")
+            return redirect('accounts:create_department')
+    finally:
+        faculty.delete()
+        messages.success(request,"Delete Operation successfull")
+        return redirect('accounts:create_department')
+
 # =========================== student site ================================
 def student_dashboard(request: HttpRequest) -> HTTPResponse:
-    complaints = cmdl.Complaint.objects.filter(complainer=request.user).count()
-    current_complaints = cmdl.Complaint.user_current_model_count(request.user)
-    resolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=True,complainer=request.user).count()
-    unresolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=False,complainer=request.user).count()
+    if get_object_or_404(mdl.Student,user=request.user):
+        complaints = cmdl.Complaint.objects.filter(complainer=request.user).count()
+        current_complaints = cmdl.Complaint.user_current_model_count(request.user)
+        resolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=True,complainer=request.user).count()
+        unresolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=False,complainer=request.user).count()
+    else:
+        complaints = cmdl.Complaint.objects.count()
+        current_complaints = cmdl.Complaint.current_model_count()
+        resolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=True).count()
+        unresolved_complaints = cmdl.Complaint.objects.filter(resolved_complaint=False).count()
     context = {'complaints':complaints,'new_complains':current_complaints,
                 'resolved':resolved_complaints,'unresolved':unresolved_complaints}
     return render(request,'accounts/student/dashboard.html',context)

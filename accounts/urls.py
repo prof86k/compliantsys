@@ -18,10 +18,15 @@ urlpatterns = [
     path('show-users',vi.show_all_users,name='users'),
     path('create-user',vi.create_user,name='create_user'),
     path('upload-users',vi.ajax_user_upload,name='upload_users'),
+    path('delete-user/<int:user_id>',vi.delete_user,name='delete_user'),
     # =========================== Main  admin Edit option ========================================
     path('edit-faculty/<int:faculty_id>',vi.edit_faculty,name='edit_faculty'),
     path('edit-department/<int:department_id>',vi.edit_department,name='edit_department'),
     path('edit-programme/<int:programme>',vi.edit_programme,name='edit_programme'),
+    # ====================== Delete record =============================================
+    path('delete-faculty/<int:faculty_id>',vi.delete_faculty,name="delete_faculty"),
+    path('delete-programme/<int:programme_id>',vi.delete_programme,name="delete_programme"),
+
     # ============================== Student option ==============================================
     path('student/dashboard',vi.student_dashboard,name='student_dashboard'),
     # ============================== HOD option ==================================================

@@ -77,6 +77,10 @@
             <!--  -->
             {% include "accounts/student_sidebar.html" %}
             <!--  -->
+            {% elif request.user.is_hod %}
+            <!--  -->
+            {% include "accounts/hod_sidebar.html" %}
+            <!--  -->
             {% endif %}
             <!-- Page Sidebar Ends-->
             <!-- page title -->
@@ -141,7 +145,8 @@
     <script src="{% static '/assets/js/chart/apex-chart/apex-chart.js' %}"></script>
     <script src="{% static '/assets/js/chart/apex-chart/stock-prices.js' %}"></script>
     <script src="{% static '/assets/js/chart/apex-chart/chart-custom1.js' %}"></script>
-
+    <script src="{% static '/assets/js/ckeditor.js' %}"></script>
+    <script src="{% static '/assets/js/ckeditor-custom.js' %}"></script>
     <!-- customizer js -->
     <!-- <script src="{% static '/assets/js/customizer.js' %}"></script> -->
 

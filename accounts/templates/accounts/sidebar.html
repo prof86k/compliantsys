@@ -58,63 +58,38 @@
                     </li>
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <i data-feather="list"></i>
+                            <span>Components</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li>
+                                <a href="{% url 'accounts:create_faculty' %}">Create Faculty</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'accounts:create_department' %}">Create Department</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'accounts:create_programme' %}">Create Programme</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i data-feather="archive"></i>
-                            <span>Deans</span>
+                            <span>Administrators</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="order-list.html">Deans Dashboard</a>
+                                <a href="{% url 'accounts:dean_dashboard' %}">Deans Dashboard</a>
                             </li>
                             <li>
-                                <a href="order-detail.html">Order Detail</a>
+                                <a href="{% url 'accounts:registry_dashboard' %}">Registry Dashboard</a>
                             </li>
                             <li>
-                                <a href="order-tracking.html">Order Tracking</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-list">
-                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i data-feather="users"></i>
-                            <span>HODS</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li>
-                                <a href="vendor-list.html">HODs Dashboard</a>
+                                <a href="{% url 'accounts:hod_dashboard' %}">HODs Dashboard</a>
                             </li>
                             <li>
-                                <a href="create-vendor.html">Create Vendor</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-list">
-                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i data-feather="users"></i>
-                            <span>Registry</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li>
-                                <a href="translation.html">Registry Dashboard</a>
-                            </li>
-                            <li>
-                                <a href="currency-rates.html">Add Account</a>
-                            </li>
-                            <li>
-                                <a href="taxes.html">Taxes</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-list">
-                        <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i data-feather="box"></i>
-                            <span>Students</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li>
-                                <a href="products.html">Students Dashboard</a>
-                            </li>
-                            <li>
-                                <a href="add-new-product.html">New Student</a>
+                                <a href="{% url 'accounts:student_dashboard' %}">Student Dashboard</a>
                             </li>
                         </ul>
                     </li>

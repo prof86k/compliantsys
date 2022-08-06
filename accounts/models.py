@@ -32,7 +32,7 @@ class Department(models.Model):
     title = models.CharField(verbose_name='Title:',max_length=255, blank=False,null=True)
     faculty = models.ForeignKey(Faculty,on_delete=models.CASCADE,related_name='faculty_departments')
     user = models.ForeignKey(User,on_delete=models.PROTECT,related_name='department_users',null=True)
-
+    
     class Meta:
         managed = True
         verbose_name = 'Department'
@@ -45,7 +45,7 @@ class Programme(models.Model):
     title = models.CharField(verbose_name='Title:',max_length=255, blank=False,null=True)
     department = models.ForeignKey(Department,on_delete=models.CASCADE,related_name='department_programmes')
     user = models.ForeignKey(User,on_delete=models.PROTECT,related_name='programme_users',null=True)
-
+    
     class Meta:
         managed = True
         verbose_name = 'Programme'
