@@ -29,7 +29,7 @@
             <ul class="nav-menus">
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     <div class="media profile-media">
-                        <img class="user-profile rounded-circle" {% if request.user.profile_picture %} src="{{request.user.profile_picture.url}}" {% else %} src="{% static '/assets/images/users/4.jpg' %}" {% endif %} alt="" />
+                        <img class="user-profile rounded-circle" {% if request.user.user_profile.profile_picture %} src="{{request.user.user_profile.profile_picture.url}}" {% else %} src="{% static '/assets/images/users/4.jpg' %}" {% endif %} alt="" />
                         <div class="user-name-hide media-body">
                             <span>Emay Walter</span>
                             <p class="mb-0 font-roboto">Admin<i class="middle fa fa-angle-down"></i></p>

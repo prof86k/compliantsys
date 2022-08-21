@@ -92,30 +92,30 @@
                             <div class="col-lg-2"></div>
                             <div class="col-lg-5">
                                 <div class="form-check form-switch">
-                                    {{form.is_dean}} <label for="is_dean" class="ol-form-label form-label-title">{{form.is_dean.label}}</label>
+                                    {{form.dean}} <label for="dean" class="ol-form-label form-label-title">{{form.dean.label}}</label>
                                 </div>
                             </div>
                             <div class="col-lg-5">
                                 <div class="form-check form-switch">
-                                    {{form.is_student}} <label for="is_student" class="ol-form-label form-label-title">{{form.is_student.label}}</label>
-                                </div>
-                            </div>
-                            <div class="col-md-2"></div>
-                            <div class="col-lg-5">
-                                <div class="form-check form-switch">
-                                    {{form.is_hod}} <label for="is_hod" class="ol-form-label form-label-title">{{form.is_hod.label}}</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-5">
-                                <div class="form-check form-switch">
-                                    {{form.is_registry}} <label for="is_registry" class="ol-form-label form-label-title">{{form.is_registry.label}}</label>
+                                    {{form.student}} <label for="student" class="ol-form-label form-label-title">{{form.student.label}}</label>
                                 </div>
                             </div>
                             <div class="col-md-2"></div>
                             <div class="col-lg-5">
                                 <div class="form-check form-switch">
-                                    {{form.is_it_support}}
-                                    <label for="is_it_support" class="ol-form-label form-label-title">{{form.is_it_support.label}}</label>
+                                    {{form.hod}} <label for="hod" class="ol-form-label form-label-title">{{form.hod.label}}</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-check form-switch">
+                                    {{form.registry}} <label for="registry" class="ol-form-label form-label-title">{{form.registry.label}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-lg-5">
+                                <div class="form-check form-switch">
+                                    {{form.it_support}}
+                                    <label for="it_support" class="ol-form-label form-label-title">{{form.it_support.label}}</label>
                                 </div>
                             </div>
                         </div>
@@ -136,12 +136,11 @@
 {% block scripts %}
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const hod = document.querySelector("#id_is_hod");
-        const student = document.querySelector("#id_is_student");
-        const dean = document.querySelector("#id_is_dean");
-        const registry = document.querySelector("#id_is_registry");
-        const itSupport = document.querySelector("#id_is_it_support");
-
+        const hod = document.querySelector("#id_hod");
+        const student = document.querySelector("#id_student");
+        const dean = document.querySelector("#id_dean");
+        const registry = document.querySelector("#id_registry");
+        const itSupport = document.querySelector("#id_it_support");
         hod.addEventListener('change', (event) => {
             if (hod.checked) {
                 student.checked = false;

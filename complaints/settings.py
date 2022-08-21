@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'complaintsApi.apps.ComplaintsapiConfig',
     # end of apps
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -62,7 +62,7 @@ AUTH_USER_MODEL = 'accounts.User'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': filter(None,os.getenv('TEMPLATES_DIRS',"").split(",")),
+        'DIRS': filter(None, os.getenv('TEMPLATES_DIRS', "").split(",")),
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,11 +83,11 @@ WSGI_APPLICATION = 'complaints.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE':config.db_config.get('ENGINE'),
+        'ENGINE': config.db_config.get('ENGINE'),
         'NAME': config.db_config.get('NAME'),
-        'USER':config.db_config.get('USER'),
-        'PASSWORD':config.db_config.get('PASSWORD'),
-        'PORT':config.db_config.get('PORT'),
+        'USER': config.db_config.get('USER'),
+        'PASSWORD': config.db_config.get('PASSWORD'),
+        'PORT': config.db_config.get('PORT'),
     }
 }
 
@@ -123,20 +123,20 @@ USE_I18N = True
 USE_TZ = True
 
 MESSAGE_TAGS = {
-    messages.ERROR:'alert-danger',
-    messages.INFO:'alert-info',
-    messages.SUCCESS:'alert-success',
-    messages.WARNING:'alert-warning',
+    messages.ERROR: 'alert-danger',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
 }
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [ os.path.join(BASE_DIR,'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 

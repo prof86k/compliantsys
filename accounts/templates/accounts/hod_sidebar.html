@@ -39,14 +39,11 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i data-feather="users"></i>
-                            <span>Users</span>
+                            <span>Students</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="{% url 'accounts:users' %}">All users</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'accounts:create_user' %}">Add new user</a>
+                                <a href="{% url 'accounts:hod_students' %}">My Student</a>
                             </li>
                         </ul>
                     </li>
@@ -69,12 +66,18 @@
                     </li>
                     <li class="sidebar-list">
                         <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                            <i data-feather="align-left"></i>
+                            <i data-feather="phone"></i>
                             <span>Complaints</span>
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="menu-lists.html">Complaints Lists</a>
+                                <a href="menu-lists.html">Student Complaints</a>
+                            </li>
+                            <li>
+                                <a href="menu-lists.html">Send Complaints</a>
+                            </li>
+                            <li>
+                                <a href="menu-lists.html">My Messages</a>
                             </li>
                         </ul>
                     </li>
