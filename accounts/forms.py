@@ -147,7 +147,7 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'full_name': forms.TextInput(attrs={
                 'class': 'form-control', 'placeholder': 'Enter full name ...',
-                'required': False, 'autofocus': True,
+                'required': False,
             }),
             'gender': forms.Select(attrs={
                 'class': 'form-control', 'required': False,

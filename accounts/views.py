@@ -1,8 +1,7 @@
-from http.client import HTTPResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpRequest
+from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.contrib import messages
 from . import forms as fms
 from . import models as mdl
@@ -10,7 +9,7 @@ from complaintsApi import models as cmdl
 
 
 # Create your views here.
-def users_login(request: HttpRequest) -> HTTPResponse:
+def users_login(request: HttpRequest) -> HttpResponse:
     '''login of users'''
     if request.method == 'POST':
         form = fms.UserLoginForm(data=request.POST)
@@ -49,7 +48,7 @@ def users_login(request: HttpRequest) -> HTTPResponse:
 
 
 @login_required
-def log_out_user(request: HttpRequest) -> HTTPResponse:
+def log_out_user(request: HttpRequest) -> HttpResponse:
     logout(request)
     messages.info(request, 'Login again to access your dashboard.')
     return redirect('accounts:login')
@@ -58,7 +57,7 @@ def log_out_user(request: HttpRequest) -> HTTPResponse:
 
 
 @login_required()
-def dashboard(request: HttpRequest) -> HTTPResponse:
+def dashboard(request: HttpRequest) -> HttpResponse:
     users = mdl.User.objects.count()
     complaints = cmdl.Complaint.objects.count()
     new_complaints = cmdl.Complaint.current_model_count()
@@ -77,11 +76,13 @@ def dashboard(request: HttpRequest) -> HTTPResponse:
 
 
 @login_required
-def profile(request: HttpRequest, user_id: int) -> HTTPResponse:
+def profile(request: HttpRequest, user_id: int) -> HttpResponse:
     user = get_object_or_404(mdl.User, id=user_id)
+    mdl.UserProfile.objects.get_or_create(user=user)
+    user_profile = mdl.UserProfile.objects.get(user=user)
     if request.method == 'POST':
         form = fms.UserProfileForm(
-            instance=user, data=request.POST, files=request.FILES)
+            instance=user_profile, data=request.POST, files=request.FILES)
         if form.is_valid():
             programme = mdl.Programme.objects.filter(
                 title=form.cleaned_data.get('programme')).first()
@@ -89,23 +90,19 @@ def profile(request: HttpRequest, user_id: int) -> HTTPResponse:
                 title=form.cleaned_data.get('department')).first()
             faculty = mdl.Faculty.objects.filter(
                 title=form.cleaned_data.get('faculty')).first()
+            phone = form.cleaned_data.get('phone')
+            is_student = form.cleaned_data.get('student')
+            gender = form.cleaned_data.get('gender')
             if (user.is_student and request.user == user) or (user.is_it_support and (form.cleaned_data.get('student') == True)):
                 if get_object_or_404(mdl.Student, user=user) is None:
                     mdl.Student.objects.create(user=user, programme=programme)
-                update_student = mdl.UserProfile(
-                    user = user,
-                    programme = programme,
-                    department = programme.department,
-                    faculty = programme.department.faculty
-                )
-                form.save(commit=False)
+                update_student = form.save(commit=False)
                 update_student.programme = programme or None
                 update_student.faculty = programme.department.faculty or faculty or None
                 update_student.department = programme.department or department or None
-                update_student.user = user
-
                 update_student.save()
-                messages.success(request, 'Update Successfull')
+                messages.success(
+                    request, 'Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
             elif (user.is_hod and request.user == user) or (user.is_it_support and (form.cleaned_data.get('hod') == True)):
                 department = get_object_or_404(
@@ -161,7 +158,7 @@ def profile(request: HttpRequest, user_id: int) -> HTTPResponse:
             messages.error(request, 'Some Fields had Errors!')
             return redirect('accounts:profile', user_id=user.id)
     else:
-        form = fms.UserProfileForm(instance=user)
+        form = fms.UserProfileForm(instance=user_profile)
     context = {'user': user, 'form': form}
     return render(request, 'accounts/profile.html', context)
 
@@ -184,7 +181,7 @@ def process_user_profile(form, model, user, field='', extra='', *args, **kwargs)
         model_user = model.objects.create(user=user)
 
 
-def create_faculty(request: HttpRequest) -> HTTPResponse:
+def create_faculty(request: HttpRequest) -> HttpResponse:
     faculties = database_models_query(mdl.Faculty, user=request.user)
     if request.method == 'POST':
         form = fms.FacultyForm(request.POST)
@@ -213,7 +210,7 @@ def ajax_upload_faculties(request: HttpRequest) -> JsonResponse:
     return JsonResponse()
 
 
-def create_department(request: HttpRequest) -> HTTPResponse:
+def create_department(request: HttpRequest) -> HttpResponse:
     departments = database_models_query(mdl.Department, request.user)
     if request.method == 'POST':
         form = fms.DepartmentForm(request.POST)
@@ -235,14 +232,14 @@ def create_department(request: HttpRequest) -> HTTPResponse:
     return render(request, 'accounts/components/create_department.html', context)
 
 
-def ajax_departments_upload(request: HttpRequest) -> HTTPResponse:
+def ajax_departments_upload(request: HttpRequest) -> HttpResponse:
     if request.is_ajax():
         pass
     context = {}
     return JsonResponse()
 
 
-def create_programme(request: HttpRequest) -> HTTPResponse:
+def create_programme(request: HttpRequest) -> HttpResponse:
     programmes = database_models_query(mdl.Programme, request.user)
     if request.method == 'POST':
         form = fms.ProgrammeForm(request.POST)
@@ -285,7 +282,7 @@ def ajax_programmes_upload(request: HttpRequest) -> JsonResponse:
     return JsonResponse()
 
 
-def create_user(request: HttpRequest) -> HTTPResponse:
+def create_user(request: HttpRequest) -> HttpResponse:
     users = mdl.User.objects.order_by('-date_joined').all()
     if request.method == "POST":
         form = fms.CreateNewUserForm(request.POST, files=request.FILES)
@@ -339,7 +336,7 @@ def ajax_user_upload(request: HttpRequest) -> JsonResponse:
     return JsonResponse
 
 
-def show_all_users(request: HttpRequest) -> HTTPResponse:
+def show_all_users(request: HttpRequest) -> HttpResponse:
     users = mdl.User.objects.order_by('-date_joined').all()
     context = {
         'users': users
@@ -347,29 +344,29 @@ def show_all_users(request: HttpRequest) -> HTTPResponse:
     return render(request, 'accounts/admins/users.html', context)
 
 
-def delete_user(request: HttpRequest, user_id: int) -> HTTPResponse:
+def delete_user(request: HttpRequest, user_id: int) -> HttpResponse:
     user = get_object_or_404(mdl.User, id=user_id)
     user.delete()
     messages.success(request, 'Record Deleted Successfully.')
     return redirect('accounts:users')
 
 
-def edit_faculty(request: HttpRequest, faculty_id: int) -> HTTPResponse:
+def edit_faculty(request: HttpRequest, faculty_id: int) -> HttpResponse:
     context = {}
     return render(request, 'accounts/admins/edit_faculty.html', context)
 
 
-def edit_department(request: HttpRequest, department_id: int) -> HTTPResponse:
+def edit_department(request: HttpRequest, department_id: int) -> HttpResponse:
     context = {}
     return render(request, 'accounts/admins/edit_department.html', context)
 
 
-def edit_programme(request: HttpRequest, programme_id: int) -> HTTPResponse:
+def edit_programme(request: HttpRequest, programme_id: int) -> HttpResponse:
     context = {}
     return render(request, 'accounts/admins/edit_programme.html', context)
 
 
-def delete_faculty(request: HttpRequest, faculty_id: int) -> HTTPResponse:
+def delete_faculty(request: HttpRequest, faculty_id: int) -> HttpResponse:
     try:
         faculty = get_object_or_404(
             mdl.Faculty, user=request.user, id=faculty_id)
@@ -385,7 +382,7 @@ def delete_faculty(request: HttpRequest, faculty_id: int) -> HTTPResponse:
         return redirect('accounts:create_faculty')
 
 
-def delete_programme(request: HttpRequest, programme_id: int) -> HTTPResponse:
+def delete_programme(request: HttpRequest, programme_id: int) -> HttpResponse:
     try:
         faculty = get_object_or_404(
             mdl.Programme, user=request.user, id=programme_id)
@@ -401,7 +398,7 @@ def delete_programme(request: HttpRequest, programme_id: int) -> HTTPResponse:
         return redirect('accounts:create_programme')
 
 
-def delete_department(request: HttpRequest, department_id: int) -> HTTPResponse:
+def delete_department(request: HttpRequest, department_id: int) -> HttpResponse:
     try:
         faculty = get_object_or_404(
             mdl.Department, user=request.user, id=department_id)
@@ -419,7 +416,7 @@ def delete_department(request: HttpRequest, department_id: int) -> HTTPResponse:
 # =========================== student site ================================
 
 
-def student_dashboard(request: HttpRequest) -> HTTPResponse:
+def student_dashboard(request: HttpRequest) -> HttpResponse:
     if get_object_or_404(mdl.Student, user=request.user):
         complaints = cmdl.Complaint.objects.filter(
             complainer=request.user).count()
@@ -441,7 +438,7 @@ def student_dashboard(request: HttpRequest) -> HTTPResponse:
     return render(request, 'accounts/student/dashboard.html', context)
 
 
-def student_profile(request: HttpRequest) -> HTTPResponse:
+def student_profile(request: HttpRequest) -> HttpResponse:
     student = get_object_or_404(mdl.Student, user=request.user)
     context = {'student': student}
     return render(request, 'accounts/student/profile.html', context)
@@ -449,17 +446,17 @@ def student_profile(request: HttpRequest) -> HTTPResponse:
 # =========================== HOD site ========================
 
 
-def hod_dashboard(request: HttpRequest) -> HTTPResponse:
+def hod_dashboard(request: HttpRequest) -> HttpResponse:
     context = {}
     return render(request, 'accounts/hod/dashboard.html', context)
 
 
-def hod_add_student(request: HttpRequest) -> HTTPResponse:
+def hod_add_student(request: HttpRequest) -> HttpResponse:
     context = {}
     return render(request, 'accounts/hod/add_student.html', context)
 
 
-def hod_students(request: HttpRequest) -> HTTPResponse:
+def hod_students(request: HttpRequest) -> HttpResponse:
     hod = get_object_or_404(mdl.Hod, user=request.user)
     department = get_object_or_404(mdl.Department, user=hod.user)
     context = {
@@ -471,13 +468,13 @@ def hod_students(request: HttpRequest) -> HTTPResponse:
 # =========================== Dean site =================================
 
 
-def dean_dashboard(request: HttpRequest) -> HTTPResponse:
+def dean_dashboard(request: HttpRequest) -> HttpResponse:
     context = {}
     return render(request, 'accounts/dean/dashboard.html', context)
 
 # ======================== registry site ==================================
 
 
-def registry_dashbaord(request: HttpRequest) -> HTTPResponse:
+def registry_dashbaord(request: HttpRequest) -> HttpResponse:
     context = {}
     return render(request, 'accounts/registry/dashboard.html', context)
