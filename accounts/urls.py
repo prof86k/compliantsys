@@ -24,7 +24,7 @@ urlpatterns = [
     path('edit-faculty/<int:faculty_id>', vi.edit_faculty, name='edit_faculty'),
     path('edit-department/<int:department_id>',
          vi.edit_department, name='edit_department'),
-    path('edit-programme/<int:programme>',
+    path('edit-programme/<int:programme_id>',
          vi.edit_programme, name='edit_programme'),
     # ====================== Delete record =============================================
     path('delete-faculty/<int:faculty_id>',

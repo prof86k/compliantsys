@@ -54,7 +54,7 @@
                                                 <input class="checkbox_animated check-it" type="checkbox" value="{{user.id}}" id="flexCheckDefault">
                                             </div>
                                             <span>
-                                                <img src="{{user.profile_picture.url}}" alt="users">
+                                                <img {% if user.user_profile.profile_picture %} src="{{user.user_profile.profile_picture.url}}" {% endif %} alt="users">
                                             </span>
                                         </td>
                                         <td>
@@ -69,11 +69,6 @@
                                                 <li>
                                                     <a href="{% url 'accounts:profile' user_id=user.id %}">
                                                         <span class="lnr lnr-eye"></span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0)">
-                                                        <span class="lnr lnr-pencil"></span>
                                                     </a>
                                                 </li>
                                                 <li>

@@ -102,14 +102,9 @@
                                                                         <td>{{department.faculty}}</td>
                                                                         <td>
                                                                             <ul>
-                                                                                <li>
-                                                                                    <a href="">
-                                                                                        <span class="lnr lnr-eye"></span>
-                                                                                    </a>
-                                                                                </li>
 
                                                                                 <li>
-                                                                                    <a href="javascript:void(0)">
+                                                                                    <a href="{% url 'accounts:edit_department' department_id=department.id %}">
                                                                                         <span class="lnr lnr-pencil"></span>
                                                                                     </a>
                                                                                 </li>

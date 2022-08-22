@@ -177,11 +177,11 @@ class Itsupport(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='user_profile')
-    faculty = models.OneToOneField(
+    faculty = models.ForeignKey(
         Faculty, on_delete=models.PROTECT, null=True, blank=True, related_name='user_faculty')
-    department = models.OneToOneField(
+    department = models.ForeignKey(
         Department, on_delete=models.PROTECT, null=True, blank=True, related_name='user_department')
-    programme = models.OneToOneField(
+    programme = models.ForeignKey(
         Programme, on_delete=models.PROTECT, null=True, blank=True, related_name='user_programme')
     profile_picture = models.ImageField(verbose_name='Profile Picture:',
                                         upload_to='images/profile_pics/%Y/%M/%d', null=True)

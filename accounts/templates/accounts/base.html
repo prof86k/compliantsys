@@ -71,15 +71,23 @@
             <!-- Page Sidebar Start-->
             {% if request.user.is_it_support %}
             <!--  -->
-            {% include "accounts/sidebar.html" %}
+            {% include "accounts/sidebars/sidebar.html" %}
             <!--  -->
             {% elif request.user.is_student %}
             <!--  -->
-            {% include "accounts/student_sidebar.html" %}
+            {% include "accounts/sidebars/student_sidebar.html" %}
             <!--  -->
             {% elif request.user.is_hod %}
             <!--  -->
-            {% include "accounts/hod_sidebar.html" %}
+            {% include "accounts/sidebars/hod_sidebar.html" %}
+            <!--  -->
+            {% elif request.user.is_registry %}
+            <!--  -->
+            {% include "accounts/sidebars/registry_sidebar.html" %}
+            <!--  -->
+            {% elif request.user.is_dean %}
+            <!--  -->
+            {% include "accounts/sidebars/dean_sidebar.html" %}
             <!--  -->
             {% endif %}
             <!-- Page Sidebar Ends-->

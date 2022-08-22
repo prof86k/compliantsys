@@ -135,6 +135,23 @@
         const dean = document.querySelector("#id_dean");
         const registry = document.querySelector("#id_registry");
         const itSupport = document.querySelector("#id_it_support");
+
+        if ("{{user.is_it_support}}" === "True") {
+            itSupport.checked = true;
+        }
+        if ("{{user.is_student}}" === "True") {
+            student.checked = true;
+        }
+        if ("{{user.is_dean}}" === "True") {
+            dean.checked = true;
+        }
+        if ("{{user.is_registry}}" === "True") {
+            registry.checked = true;
+        }
+        if ("{{user.is_hod}}" === "True") {
+            hod.checked = true;
+        }
+
         hod.addEventListener('change', (event) => {
             if (hod.checked) {
                 student.checked = false;
@@ -176,6 +193,7 @@
                 dean.checked = false;
                 registry.checked = false;
             }
+
         });
     });
 </script>

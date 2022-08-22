@@ -90,12 +90,9 @@ def profile(request: HttpRequest, user_id: int) -> HttpResponse:
                 title=form.cleaned_data.get('department')).first()
             faculty = mdl.Faculty.objects.filter(
                 title=form.cleaned_data.get('faculty')).first()
-            phone = form.cleaned_data.get('phone')
-            is_student = form.cleaned_data.get('student')
-            gender = form.cleaned_data.get('gender')
             if (user.is_student and request.user == user) or (user.is_it_support and (form.cleaned_data.get('student') == True)):
-                if get_object_or_404(mdl.Student, user=user) is None:
-                    mdl.Student.objects.create(user=user, programme=programme)
+                mdl.Student.objects.get_or_create(
+                    user=user, programme=programme)
                 update_student = form.save(commit=False)
                 update_student.programme = programme or None
                 update_student.faculty = programme.department.faculty or faculty or None
@@ -105,56 +102,31 @@ def profile(request: HttpRequest, user_id: int) -> HttpResponse:
                     request, 'Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
             elif (user.is_hod and request.user == user) or (user.is_it_support and (form.cleaned_data.get('hod') == True)):
-                department = get_object_or_404(
-                    mdl.Department, title=form.cleaned_data.get('department'))
-                try:
-                    hod = get_object_or_404(mdl.Hod, user=user)
-                    hod.save()
-                except Exception as e:
-                    mdl.Hod.objects.create(user=user, department=department)
-                form.save()
-                user.is_hod = True
-                user.save()
+                mdl.Hod.objects.get_or_create(user=user, department=department)
+                update_hod = form.save(commit=False)
+                update_hod.department = department
+                update_hod.save()
                 messages.success(request, 'Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
             elif (user.is_dean and request.user == user) or (user.is_it_support and (form.cleaned_data.get('dean') == True)):
-                faculty = get_object_or_404(
-                    mdl.Faculty, title=form.cleaned_data.get('faculty'))
-                try:
-                    dean = get_object_or_404(mdl.Dean, user=user)
-                    dean.save()
-                except Exception as e:
-                    mdl.Dean.objects.create(user=user, faculty=faculty)
-                form.save()
-                user.is_dean = True
-                user.save()
+                mdl.Dean.objects.get_or_create(user=user, faculty=faculty)
+                update_dean = form.save(commit=False)
+                update_dean.faculty = faculty
+                update_dean.save()
                 messages.success(request, 'Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
             elif (user.is_registry and request.user == user) or (user.is_it_support and (form.cleaned_data.get('registry') == True)):
-                try:
-                    registry = get_object_or_404(mdl.Registry, user=user)
-                    registry.save()
-                except Exception as e:
-                    mdl.Registry.objects.create(user=user)
+                mdl.Registry.objects.get_or_create(user=user)
                 form.save()
-                user.is_registry = True
-                user.save()
                 messages.success(request, 'Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
             elif (user.is_it_support and form.cleaned_data.get('it_support') == True):
-                try:
-                    it_Support = get_object_or_404(mdl.Itsupport, user=user)
-                    it_Support.save()
-                except Exception as e:
-                    it_Support = mdl.Itsupport.objects.create(user=user)
-                it_support_profile = form.save(commit=False)
-                it_support_profile.user = it_Support.user
-                it_support_profile.save()
-                user.is_it_support = True
-                user.save()
+                mdl.Itsupport.objects.get_or_create(user=user)
+                form.save()
                 messages.success(request, 'IT support Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
         else:
+            print(form.errors)
             messages.error(request, 'Some Fields had Errors!')
             return redirect('accounts:profile', user_id=user.id)
     else:
@@ -270,7 +242,7 @@ def create_programme(request: HttpRequest) -> HttpResponse:
 def database_models_query(model, user):
     'Query from any models to return the query object'
     results = model.objects.filter(user=user).all()
-    if user.is_it_support or results is None:
+    if user.is_it_support or not results:
         results = model.objects.all()
     return results
 
@@ -300,21 +272,6 @@ def create_user(request: HttpRequest) -> HttpResponse:
                                     is_student=student, is_dean=dean, is_registry=registry, is_it_support=it_support)
                 new_user.set_password(password)
                 new_user.save()
-                if new_user.is_student:
-                    mdl.Student.objects.create(user=new_user)
-                elif new_user.is_hod:
-                    department = get_object_or_404(
-                        mdl.Department, title=form.cleaned_data.get('department'))
-                    mdl.Hod.objects.create(
-                        user=new_user, department=department)
-                elif new_user.is_dean:
-                    faculty = get_object_or_404(
-                        mdl.Faculty, title=form.cleaned_data.get('faculty'))
-                    mdl.Dean.objects.create(user=new_user, faculty=faculty)
-                elif new_user.is_registry:
-                    mdl.Registry.objects.create(user=new_user)
-                elif new_user.is_it_support:
-                    mdl.Itsupport.objects.create(user=new_user)
                 messages.success(request, message="User created")
                 return redirect("accounts:create_user")
             except Exception as e:
@@ -352,18 +309,72 @@ def delete_user(request: HttpRequest, user_id: int) -> HttpResponse:
 
 
 def edit_faculty(request: HttpRequest, faculty_id: int) -> HttpResponse:
-    context = {}
-    return render(request, 'accounts/admins/edit_faculty.html', context)
+    '''
+    @ edit the created faculty information
+    '''
+    facutly = get_object_or_404(mdl.Faculty, id=faculty_id)
+    if request.method == "POST":
+        form = fms.FacultyForm(instance=facutly, data=request.POST)
+        if form.is_valid():
+            update_faculty = form.save(commit=False)
+            update_faculty.user = request.user
+            update_faculty.save()
+            messages.success(
+                request, 'Faculty information updated successfully.')
+            return redirect('accounts:create_faculty')
+    else:
+        form = fms.FacultyForm(instance=facutly)
+    context = {
+        'form': form,
+        'faculty': facutly,
+    }
+    return render(request, 'accounts/components/edit_faculty.html', context)
 
 
 def edit_department(request: HttpRequest, department_id: int) -> HttpResponse:
-    context = {}
-    return render(request, 'accounts/admins/edit_department.html', context)
+    '''
+    @ edit department information 
+    '''
+    department = get_object_or_404(mdl.Department, id=department_id)
+    if request.method == 'POST':
+        form = fms.DepartmentForm(instance=department, data=request.POST)
+        if form.is_valid():
+            update_department = form.save(commit=False)
+            update_department.user = request.user
+            update_department.save()
+            messages.success(
+                request, 'Department information updated successfully.')
+            return redirect('accounts:create_department')
+    else:
+        form = fms.DepartmentForm(instance=department)
+    context = {
+        'form': form,
+        'department': department,
+    }
+    return render(request, 'accounts/components/edit_department.html', context)
 
 
 def edit_programme(request: HttpRequest, programme_id: int) -> HttpResponse:
-    context = {}
-    return render(request, 'accounts/admins/edit_programme.html', context)
+    '''
+    @ update information of a programme
+    '''
+    programme = get_object_or_404(mdl.Programme, id=programme_id)
+    if request.method == 'POST':
+        form = fms.ProgrammeForm(instance=programme, data=request.POST)
+        if form.is_valid():
+            update_programme = form.save(commit=False)
+            update_programme.user = request.user
+            update_programme.save()
+            messages.success(
+                request, 'Programme information updated successfully.')
+            return redirect('accounts:create_programme')
+    else:
+        form = fms.ProgrammeForm(instance=programme)
+    context = {
+        'form': form,
+        'programme': programme,
+    }
+    return render(request, 'accounts/components/edit_programme.html', context)
 
 
 def delete_faculty(request: HttpRequest, faculty_id: int) -> HttpResponse:
@@ -436,12 +447,6 @@ def student_dashboard(request: HttpRequest) -> HttpResponse:
     context = {'complaints': complaints, 'new_complains': current_complaints,
                'resolved': resolved_complaints, 'unresolved': unresolved_complaints}
     return render(request, 'accounts/student/dashboard.html', context)
-
-
-def student_profile(request: HttpRequest) -> HttpResponse:
-    student = get_object_or_404(mdl.Student, user=request.user)
-    context = {'student': student}
-    return render(request, 'accounts/student/profile.html', context)
 
 # =========================== HOD site ========================
 

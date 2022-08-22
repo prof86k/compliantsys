@@ -1,0 +1,60 @@
+{% extends "accounts/base.html" %}
+<!--  -->
+{% block title %} Edit | {{programme}} {% endblock title %}
+<!--  -->
+{% block headerTitle %} Edit | {{programme}} {% endblock headerTitle %}
+<!--  -->
+{% block linkForm %}
+<script>
+    document.write(new Date().toUTCString().replace(new Date().toUTCString().substring(17), ""));
+</script>
+{% endblock linkForm %}
+<!--  -->
+{% block content %}
+<!-- New Product Add Start -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-header-2">
+                                <h5>Edit Programme</h5>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form action="{% url 'accounts:edit_programme' programme_id=programme.id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-2 mb-0">{{form.title.label}}</label>
+                                                <div class="col-md-10">
+                                                    {{form.title}}
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-2 col-form-label form-label-title">{{form.department.label}}</label>
+                                                <div class="col-md-10">
+                                                    {{form.department}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button class="btn btn-primary offset-md-10" type="submit">Save Update</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Product Add End -->
+{% endblock content %}

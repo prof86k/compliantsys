@@ -99,27 +99,18 @@
                                                                                 {{faculty.title}}                                                                               
                                                                             </span>
                                                                         </td>
-
                                                                         <td>
                                                                             <a href="javascript:void(0)">
                                                                                 <span class="d-block ">{{faculty.code}}</span>
                                                                             </a>
                                                                         </td>
-
                                                                         <td>
                                                                             <ul>
                                                                                 <li>
-                                                                                    <a href="">
-                                                                                        <span class="lnr lnr-eye"></span>
-                                                                                    </a>
-                                                                                </li>
-
-                                                                                <li>
-                                                                                    <a href="javascript:void(0)">
+                                                                                    <a href=" {% url 'accounts:edit_faculty' faculty_id=faculty.id %}">
                                                                                         <span class="lnr lnr-pencil"></span>
                                                                                     </a>
                                                                                 </li>
-
                                                                                 <li>
                                                                                     <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{faculty.id}}">
                                                                                         <span class="lnr lnr-trash"></span>

@@ -109,11 +109,7 @@
                                                             <table class="user-table table table-striped">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>
-                                                                            <span class="form-check user-checkbox">
-                                                                                <input class="checkbox_animated" type="checkbox" value="" id="checkall">
-                                                                            </span>User</th>
-                                                                        <th>Name</th>
+                                                                        <th>User Name</th>
                                                                         <th>Email</th>
                                                                         <th>Last Login</th>
                                                                         <th>Options</th>
@@ -122,14 +118,6 @@
                                                                 <tbody>
                                                                     {% for user in users %}
                                                                     <tr>
-                                                                        <td>
-                                                                            <div class="form-check user-checkbox">
-                                                                                <input class="checkbox_animated check-it" type="checkbox" value="{{user.id}}" id="flexCheckDefault">
-                                                                            </div>
-                                                                            <span>
-                                                                                    <img src="{{user.profile_picture.url}}" alt="users">
-                                                                                </span>
-                                                                        </td>
 
                                                                         <td>
                                                                             <a href="javascript:void(0)">
@@ -150,13 +138,6 @@
                                                                                         <span class="lnr lnr-eye"></span>
                                                                                     </a>
                                                                                 </li>
-
-                                                                                <li>
-                                                                                    <a href="javascript:void(0)">
-                                                                                        <span class="lnr lnr-pencil"></span>
-                                                                                    </a>
-                                                                                </li>
-
                                                                                 <li>
                                                                                     <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{user.id}}">
                                                                                         <span class="lnr lnr-trash"></span>
