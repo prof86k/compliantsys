@@ -17,8 +17,6 @@ def users_login(request: HttpRequest) -> HttpResponse:
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=username, password=password)
-            print(password, username)
-            print(user)
             if user is not None:
                 login(request, user=user)
                 if user.is_it_support:
@@ -62,10 +60,7 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     complaints = cmdl.Complaint.objects.count()
     new_complaints = cmdl.Complaint.current_model_count()
     resolved_complaints = cmdl.Complaint.objects.filter(
-        hod_solve=True,
-        dean_solve=True,
-        registry_solve=True,
-        support_repond=True
+        solve=True
     ).count()
     context = {
         'users': users, 'complaints': complaints,
@@ -434,9 +429,9 @@ def student_dashboard(request: HttpRequest) -> HttpResponse:
         current_complaints = cmdl.Complaint.user_current_model_count(
             request.user)
         resolved_complaints = cmdl.Complaint.objects.filter(
-            resolved_complaint=True, complainer=request.user).count()
+            solve=True, complainer=request.user).count()
         unresolved_complaints = cmdl.Complaint.objects.filter(
-            resolved_complaint=False, complainer=request.user).count()
+            solve=False, complainer=request.user).count()
     else:
         complaints = cmdl.Complaint.objects.count()
         current_complaints = cmdl.Complaint.current_model_count()

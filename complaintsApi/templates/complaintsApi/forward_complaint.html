@@ -1,0 +1,71 @@
+{% extends "accounts/base.html" %}
+<!--  -->
+{% block title %} Forward {% endblock title %}
+<!--  -->
+{% block headerTitle %} Forward Complaints {% endblock headerTitle %}
+<!--  -->
+{% block linkForm %}
+<script>
+    document.write(new Date().toUTCString().replace(new Date().toUTCString().substring(17), ""))
+</script>
+{% endblock linkForm %}
+<!--  -->
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Forward Complaints
+            </div>
+            <div class="card-body">
+                <form action="#" method="post">
+                    {% csrf_token %}
+                    <div class="row mb-5">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label for="forward_to_dean">{{form.forward_to_dean.label}}</label>
+                                <!--  -->
+                                {{form.forward_to_dean}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label for="forward_to_registry">{{form.forward_to_registry.label}}</label>
+                                <!--  -->
+                                {{form.forward_to_registry}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label for="forward_to_it">{{form.forward_to_it.label}}</label>
+                                <!--  -->
+                                {{form.forward_to_it}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label for="user_repond_text">{{form.user_repond_text.label}}</label>
+                                <!--  -->
+                                {{form.user_repond_text}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <button class="btn btn-primary">Forward</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

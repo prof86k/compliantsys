@@ -10,3 +10,71 @@
 </script>
 {% endblock linkForm %}
 <!--  -->
+{% block content %}
+<div class="container">
+    {% for complain in complaints %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-success">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>{{complain.title|title}}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <span class="text-muted offset-md-4"> By: </span> {{complain.complainer|upper}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>
+                        {{complain.description|linebreaks}}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="col-md-12">
+                        <div class="row d-flex">
+                            <div class="col-md-12">
+                                {% if complain.forward %}
+                                <div class="row d-flex">
+                                    <div class="col-md-6">Forward to </div>
+                                    <div class="col-md-6">{{complain.forward_to}}</div>
+                                </div>
+                                {% elif complain.solve %}
+                                <div class="row d-flex">
+                                    <div class="col-md-6">
+                                        Status
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{Resolved}}
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row d-flex">
+                                    <div class="col-md-6">
+                                        Resolve
+                                        <div class="form-check form-switch">
+                                            <input type="checkbox" id="id_{{complain.id}}" class="form-check-input">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <a href="{% url 'complaints:forward' complaint_id=complain.id %}" class="btn btn-primary btn-sm offset-md-5 offset-sm-10">Forward</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+</div>
+<!--  -->
+{% endblock content %}
+<!--  -->

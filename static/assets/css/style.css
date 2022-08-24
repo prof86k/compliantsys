@@ -989,23 +989,23 @@
 }
 
 .badge-primary {
-    background-color: #e22454
+    background-color: #616060
 }
 
 .badge-secondary {
-    background-color: #ef3f3e
+    background-color: #4d4d4d
 }
 
 .badge-success {
-    background-color: #9e65c2
+    background-color: #25a871
 }
 
 .badge-danger {
-    background-color: #6670bd
+    background-color: #c71c1c
 }
 
 .badge-info {
-    background-color: #a927f9
+    background-color: #27b6f9
 }
 
 .badge-light {
@@ -1017,7 +1017,7 @@
 }
 
 .badge-warning {
-    background-color: #747dc6
+    background-color: #c6b074
 }
 
 .badge-primary {
@@ -1029,52 +1029,52 @@
 }
 
 .bg-primary {
-    background-color: #e22454 !important;
+    background-color: #2466e2 !important;
     color: #fff
 }
 
 .bg-light-primary {
-    background-color: rgba(226, 36, 84, 0.2) !important;
+    background-color: rgba(36, 112, 226, 0.2) !important;
     color: #fff
 }
 
 .bg-secondary {
-    background-color: #ef3f3e !important;
+    background-color: #5c5c5c !important;
     color: #fff
 }
 
 .bg-light-secondary {
-    background-color: rgba(239, 63, 62, 0.2) !important;
+    background-color: rgba(54, 54, 54, 0.2) !important;
     color: #fff
 }
 
 .bg-success {
-    background-color: #9e65c2 !important;
+    background-color: #165e52 !important;
     color: #fff
 }
 
 .bg-light-success {
-    background-color: rgba(158, 101, 194, 0.2) !important;
+    background-color: rgba(83, 238, 166, 0.726) !important;
     color: #fff
 }
 
 .bg-danger {
-    background-color: #6670bd !important;
+    background-color: #b60303 !important;
     color: #fff
 }
 
 .bg-light-danger {
-    background-color: rgba(102, 112, 189, 0.2) !important;
+    background-color: rgba(248, 42, 59, 0.2) !important;
     color: #fff
 }
 
 .bg-info {
-    background-color: #a927f9 !important;
+    background-color: #42a6ce !important;
     color: #fff
 }
 
 .bg-light-info {
-    background-color: rgba(169, 39, 249, 0.2) !important;
+    background-color: rgba(66, 147, 201, 0.2) !important;
     color: #fff
 }
 
@@ -1084,27 +1084,27 @@
 }
 
 .bg-light-light {
-    background-color: rgba(244, 244, 244, 0.2) !important;
+    background-color: rgba(244, 244, 244, 0.473) !important;
     color: #fff
 }
 
 .bg-dark {
-    background-color: #2c323f !important;
+    background-color: #1e232c !important;
     color: #fff
 }
 
 .bg-light-dark {
-    background-color: rgba(44, 50, 63, 0.2) !important;
+    background-color: rgba(39, 44, 54, 0.2) !important;
     color: #fff
 }
 
 .bg-warning {
-    background-color: #747dc6 !important;
+    background-color: #ad7804 !important;
     color: #fff
 }
 
 .bg-light-warning {
-    background-color: rgba(116, 125, 198, 0.2) !important;
+    background-color: rgba(207, 171, 10, 0.2) !important;
     color: #fff
 }
 
