@@ -116,36 +116,18 @@ def profile(request: HttpRequest, user_id: int) -> HttpResponse:
                 messages.success(request, 'Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
             elif (user.is_it_support and form.cleaned_data.get('it_support') == True):
-                mdl.Itsupport.objects.get_or_create(user=user)
+                it = mdl.Itsupport.objects.get_or_create(user=user)
+                print(it)
                 form.save()
                 messages.success(request, 'IT support Update Successfull')
                 return redirect('accounts:profile', user_id=user.id)
         else:
-            print(form.errors)
             messages.error(request, 'Some Fields had Errors!')
             return redirect('accounts:profile', user_id=user.id)
     else:
         form = fms.UserProfileForm(instance=user_profile)
     context = {'user': user, 'form': form}
     return render(request, 'accounts/profile.html', context)
-
-
-def process_user_profile(form, model, user, field='', extra='', *args, **kwargs):
-    '''
-    @ process and save the user profile information
-    @ find the models to use
-    @ find the user
-    @ the field on which the programme, department, or faculty will depend on as extra field
-    @ form that contains extra information to save for all the users
-    '''
-    update_model_user = form.save(commit=False)
-    if extra:
-        model_type = model.objects.filter(title=extra).first()
-        if model_type is None:
-            model_user = model.objects.create(user=user, field=model_type)
-            update_model_user.field = model_type
-    else:
-        model_user = model.objects.create(user=user)
 
 
 def create_faculty(request: HttpRequest) -> HttpResponse:

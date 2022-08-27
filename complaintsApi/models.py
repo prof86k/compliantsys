@@ -16,12 +16,10 @@ class Complaint(models.Model):
     solve = models.BooleanField(verbose_name='Solve:', default=False)
     user_repond_text = models.TextField(
         verbose_name='Respond Text:', null=True, blank=True)
-    forward_to_dean = models.ForeignKey(
-        acmdl.Dean, on_delete=models.PROTECT, related_name='forward_to_dean', null=True)
-    forward_to_registry = models.ForeignKey(
-        acmdl.Registry, on_delete=models.PROTECT, related_name='forward_to_registry', null=True)
-    forward_to_it = models.ForeignKey(
-        acmdl.Itsupport, on_delete=models.PROTECT, related_name='forward_to_it', null=True)
+    forward_to = models.CharField(
+        verbose_name="Forward To:", max_length=255, null=True, blank=True)
+    forward_to_user = models.ForeignKey(
+        acmdl.User, on_delete=models.PROTECT, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 

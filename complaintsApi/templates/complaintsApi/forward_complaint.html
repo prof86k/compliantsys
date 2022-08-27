@@ -5,12 +5,21 @@
 {% block headerTitle %} Forward Complaints {% endblock headerTitle %}
 <!--  -->
 {% block linkForm %}
-<script>
-    document.write(new Date().toUTCString().replace(new Date().toUTCString().substring(17), ""))
-</script>
+<a href="{% url 'complaints:view_complaints' %}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Go back">
+    <span class="lnr lnr-arrow-left"></span> back
+</a>
 {% endblock linkForm %}
 <!--  -->
 {% block content %}
+<div class="row">
+    <div class="col-md-12">
+        {% for message in messages %}
+        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> {{message}}
+        </div>
+        {% endfor %}
+    </div>
+</div>
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -18,32 +27,14 @@
                 Forward Complaints
             </div>
             <div class="card-body">
-                <form action="#" method="post">
+                <form action="{% url 'complaints:forward' complaint_id=complaint.id %}" method="post">
                     {% csrf_token %}
                     <div class="row mb-5">
                         <div class="form-group">
                             <div class="col-md-12">
-                                <label for="forward_to_dean">{{form.forward_to_dean.label}}</label>
+                                <label for="forward_to">{{form.forward_to.label}}</label>
                                 <!--  -->
-                                {{form.forward_to_dean}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-5">
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <label for="forward_to_registry">{{form.forward_to_registry.label}}</label>
-                                <!--  -->
-                                {{form.forward_to_registry}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-5">
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <label for="forward_to_it">{{form.forward_to_it.label}}</label>
-                                <!--  -->
-                                {{form.forward_to_it}}
+                                {{form.forward_to}}
                             </div>
                         </div>
                     </div>

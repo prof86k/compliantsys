@@ -57,15 +57,21 @@ def forward_complaints(request: HttpRequest, complaint_id: int, *args, **kwargs)
     if request.method == 'POST':
         form = fms.ForwardComplainForm(request.POST)
         if form.is_valid():
-            complaint.forward_to_dean = form.cleaned_data.get(
-                'forward_to_dean')
-            complaint.forward_to_registry = form.cleaned_data.get(
-                'forward_to_registry')
-            complaint.forward_to_it = form.cleaned_data.get('forward_to_it')
-            complaint.user_reponse_text = form.cleaned_data.get(
-                'user_response_text')
+            forward_to = form.cleaned_data.get('forward_to')
+            user_repond_text = form.cleaned_data.get('user_repond_text')
+            if forward_to == 'dean':
+                user = acmdl.User.objects.filter(is_dean=True).first()
+            elif forward_to == 'registry':
+                user = acmdl.User.objects.filter(is_registry=True).first()
+            else:
+                user = acmdl.User.objects.filter(is_it_support=True).first()
+            complaint.forward_to_user = user
+            complaint.user_repond_text = user_repond_text
+            complaint.forward_to = forward_to
             complaint.forward = True
             complaint.save()
+            messages.success(
+                request, f'Complaints Forward to {forward_to.title()}')
             return redirect('complaints:forward', complaint_id=complaint.id)
     else:
         form = fms.ForwardComplainForm()
@@ -145,6 +151,38 @@ def view_complaint_detailed(request, complaint_id):
         mdl.Complaint, pk=complaint_id, complainer=request.user)
     context = {'complaint': complaint}
     return render(request, 'complaintsApi/students/view_complaint_detailed.html', context)
+
+
+def view_complaints_details(request: HttpRequest, complain_id: int, *args, **kwargs) -> HttpResponse:
+    '''
+    @ show the detailes of the complaints
+    '''
+    complain = get_object_or_404(mdl.Complaint, pk=complain_id)
+    context = {'complain': complain}
+
+    return render(request, 'complaintsApi/complaint_detailes.html', context)
+
+
+def resolve_complaint(request: HttpRequest, complaint_id: int, *args, **kwargs) -> HttpResponse:
+    '''
+    @ resolve the complaints
+    '''
+    complaint = get_object_or_404(mdl.Complaint, pk=complaint_id)
+    complaint.solve = True
+    complaint.save()
+    messages.success(request, 'Complaint Resolved')
+    return redirect('complaints:veiw_complain', complain_id=complaint_id)
+
+
+def reverse_resolve_complaint(request: HttpRequest, complaint_id: int, *args, **kwargs) -> HttpResponse:
+    '''
+    @ severse resolve the complaints
+    '''
+    complaint = get_object_or_404(mdl.Complaint, pk=complaint_id)
+    complaint.solve = False
+    complaint.save()
+    messages.success(request, 'Resolved Complaint Reversed')
+    return redirect('complaints:veiw_complain', complain_id=complaint_id)
 
 
 def edit_student_complaint(request, complaint_id):

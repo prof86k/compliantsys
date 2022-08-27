@@ -23,27 +23,17 @@ class ForwardComplainForm(forms.ModelForm):
     @ select the user to forwar to
     @ add any text for the next description
     '''
+
     class Meta:
+        TITLE = (('', '...'), ('dean', 'DEAN'), ('registry',
+                 'REGISTRY'), ('itSupport', 'IT SUPPORT'))
         model = mdl.Complaint
-        fields = ('forward_to_dean', 'forward_to_registry',
-                  'forward_to_it', 'user_repond_text')
-        labels = [
-            {'forward_to_dean': "To Dean:"}, {
-                'forward_to_registry': 'To Registry:'},
-            {'forward_to_it': 'To IT Support:'}, {
-                'user_reponse_text': 'Response Text:'}
-        ]
+        fields = ('forward_to', 'user_repond_text')
         widgets = {
-            'forward_to_dean': forms.Select(attrs={
-                'class': 'form-control'
-            }),
-            'forward_to_registry': forms.Select(attrs={
-                'class': 'form-control'
-            }),
-            'forward_to_it': forms.Select(attrs={
-                'class': 'form-control'
-            }),
+            'forward_to': forms.Select(attrs={
+                'class': 'form-control', 'required': True,
+            }, choices=TITLE),
             'user_repond_text': forms.Textarea(attrs={
-                'class': 'form-control', 'rows': 2
-            })
+                'class': 'form-control', 'rows': 2, 'required': False,
+            }),
         }

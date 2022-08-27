@@ -1,0 +1,11 @@
+{% extends "accounts/base.html" %}
+<!--  -->
+{% block title %} Deans {% endblock title %}
+<!--  -->
+{% block headerTitle %} Deans List {% endblock headerTitle %}
+<!--  -->
+{% block linkForm %}
+<script>
+    document.write(new Date().toUTCString().replace(new Date().toUTCString().substring(17), ""))
+</script>
+{% endblock linkForm %}

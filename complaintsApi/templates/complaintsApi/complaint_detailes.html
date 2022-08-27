@@ -1,0 +1,81 @@
+{% extends 'accounts/base.html' %}
+<!--  -->
+{% block title %} {{complain|upper}} {% endblock title %}
+<!--  -->
+{% block headerTitle %} Complaint Detail {% endblock headerTitle %}
+<!--  -->
+{% block linkForm %}
+<a href="{% url 'complaints:view_complaints' %}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Go back">
+    <span class="lnr lnr-arrow-left"></span> back
+</a>
+<!-- <script> -->
+<!-- // document.write(new Date().toUTCString().replace(new Date().toUTCString().substring(17), "")); -->
+<!-- </script> -->
+{% endblock linkForm %}
+<!--  -->
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        {% for message in messages %}
+        <div class="alert {{message.tags}} alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            
+        </button>
+            <!--  -->
+            {{message}}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 col-lg-12 col-sm-12">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <h3>{{complain|title}}</h3>
+                        </div>
+                        <div class="col-md-5">
+                            <span class="offset-md-7"> By: <span class="text-muted">{{complain.complainer}}</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>
+                        {{complain.description|safe}}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            {% if complain.solve %}
+                            <span class="text-success">Resolved</span>
+                            <!--  -->
+                            {% else %}
+                            <span><a href="{% url 'complaints:resolve' complaint_id=complain.id %}" class="btn btn-primary mb-3">Resolve</a></span>
+                            <!--  -->
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            {% if not complain.solve %}
+                            <!--  -->
+                            {% if not complain.forward %}
+                            <span class="offset-md-9 offset-sm-4"><a href="{% url 'complaints:forward' complaint_id=complain.id %}" class="btn btn-warning ">Forward</a></span>
+                            <!--  -->
+                            {% elif complain.forward %}
+                            <span class="text-info offset-md-9 offset-sm-4">Forwarded</span>
+                            <!--  -->
+                            {% endif %} {% else %}
+                            <span class="offset-md-6 offset-sm-4"><a href="{% url 'complaints:reverse_resolve' complaint_id=complain.id  %}" class="btn btn-warning ">Reverse Resolve</a></span>
+                            <!--  -->
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

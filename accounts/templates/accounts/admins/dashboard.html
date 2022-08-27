@@ -54,7 +54,10 @@
                             </h4>
                         </div>
                         <div class="align-self-center text-center">
-                            <i data-feather="message-circle"></i>
+                            <a href="{% url 'complaints:view_complaints' %}">
+
+                                <i data-feather="message-circle"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -80,37 +83,6 @@
                 </div>
             </div>
         </div>
-        <!-- chart caard section End -->
-        <!-- Earning chart star-->
-        <div class="col-xl-4">
-            <div class="card o-hidden card-hover">
-                <div class="card-header border-0 pb-1">
-                    <div class="card-header-title">
-                        <h4>Incomming Complaints</h4>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div id="bar-chart-earning"></div>
-                </div>
-            </div>
-        </div>
-        <!-- Earning chart end-->
-        <!-- Earning chart star-->
-        <div class="col-xl-8">
-            <div class="card o-hidden ">
-                <div class="card-header border-0 pb-1">
-                    <div class="card-header-title">
-                        <h4>Responds Report</h4>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div id="report-chart"></div>
-                </div>
-            </div>
-        </div>
-        <!-- Earning chart  end-->
-        <!-- Transactions start-->
-        <!-- Browser States end-->
     </div>
 </div>
 {% endblock content %}
