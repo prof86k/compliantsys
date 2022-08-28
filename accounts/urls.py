@@ -10,15 +10,13 @@ urlpatterns = [
     path('profile/<int:user_id>', vi.profile, name='profile'),
     # ========================= Main admin create option =========================================
     path('create-faculty', vi.create_faculty, name='create_faculty'),
-    path('upload-faculties', vi.ajax_upload_faculties, name='upload_faculties'),
+    path('view-hods', vi.view_hods, name='hods'),
+    path('view-registries', vi.view_registries, name='registry'),
+    path('view-deans', vi.view_deans, name='deans'),
     path('create-department', vi.create_department, name='create_department'),
-    path('upload-departments', vi.ajax_departments_upload,
-         name='upload_departments'),
     path('create-programme', vi.create_programme, name='create_programme'),
-    path('upload-programmes', vi.ajax_programmes_upload, name='upload_programme'),
     path('show-users', vi.show_all_users, name='users'),
     path('create-user', vi.create_user, name='create_user'),
-    path('upload-users', vi.ajax_user_upload, name='upload_users'),
     path('delete-user/<int:user_id>', vi.delete_user, name='delete_user'),
     # =========================== Main  admin Edit option ========================================
     path('edit-faculty/<int:faculty_id>', vi.edit_faculty, name='edit_faculty'),

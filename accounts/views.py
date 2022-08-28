@@ -152,13 +152,6 @@ def create_faculty(request: HttpRequest) -> HttpResponse:
     return render(request, 'accounts/components/add_faculty.html', context)
 
 
-def ajax_upload_faculties(request: HttpRequest) -> JsonResponse:
-    if request.is_ajax():
-        pass
-    context = {}
-    return JsonResponse()
-
-
 def create_department(request: HttpRequest) -> HttpResponse:
     departments = database_models_query(mdl.Department, request.user)
     if request.method == 'POST':
@@ -181,11 +174,37 @@ def create_department(request: HttpRequest) -> HttpResponse:
     return render(request, 'accounts/components/create_department.html', context)
 
 
-def ajax_departments_upload(request: HttpRequest) -> HttpResponse:
-    if request.is_ajax():
-        pass
-    context = {}
-    return JsonResponse()
+def view_deans(request: HttpRequest) -> HttpResponse:
+    '''
+    @ list all the deans of the school
+    '''
+    deans = mdl.Dean.objects.all()
+    context = {
+        'deans': deans
+    }
+    return render(request, 'accounts/admins/deans.html', context)
+
+
+def view_hods(request: HttpRequest) -> HttpResponse:
+    '''
+    @ list all the hods of the school
+    '''
+    hods = mdl.Hod.objects.all()
+    context = {
+        'hods': hods
+    }
+    return render(request, 'accounts/admins/hods.html', context)
+
+
+def view_registries(request: HttpRequest) -> HttpResponse:
+    '''
+    @ list all the registries of the school
+    '''
+    registries = mdl.Registry.objects.all()
+    context = {
+        'registries': registries
+    }
+    return render(request, 'accounts/admins/registries.html', context)
 
 
 def create_programme(request: HttpRequest) -> HttpResponse:

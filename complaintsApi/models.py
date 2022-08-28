@@ -38,10 +38,8 @@ class Complaint(models.Model):
     @classmethod
     def current_complaints(cls):
         '''return all the current complaints'''
-        return [
-            complaint for complaint in cls.objects.filter(solve=False).all()
-            if complaint.date_updated.date() == datetime.today().date()
-        ]
+        return cls.objects.filter(solve=False, date_updated=datetime.today().date()).all()
+        # if complaint.date_updated.date() == datetime.today().date()
 
     @classmethod
     def user_current_model_count(cls, user):

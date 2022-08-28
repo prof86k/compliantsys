@@ -10,4 +10,82 @@
 </script>
 {% endblock linkForm %}
 <!--  -->
-{% block content %} {% endblock content %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="user-table table table-striped">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Title</th>
+                                <th>Complainer</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for complain in new_complaints %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{complain.title|title}}</td>
+                                <td>{{complain.complainer|upper}}</td>
+                                <td>{{complain.description| truncatechars:10 | safe}}</td>
+                                <td>
+                                    {% if complain.solve %}
+                                    <span class="text-success">Resolved</span>
+                                    <!--  -->
+                                    {% elif complain.forward %}
+                                    <span class="text-info">Forwarded</span>
+                                    <!--  -->
+                                    {% else %}
+                                    <span class="text-danger">Pending</span>
+                                    <!--  -->
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>
+                                            <a href="{% url 'complaints:forward' complaint_id=complain.id %}" data-toggle="tooltip" data-placement="top" title="forward this complaints">
+                                                <i data-feather="arrow-right"></i> </a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'complaints:veiw_complain' complain_id=complain.id %}" data-toggle="tooltip" data-placement="top" title="View Complaint Details">
+                                                <span class="lnr lnr-eye"></span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop{{complain.id}}" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Erase This Record">
+                                                <span class="lnr lnr-trash"></span>
+                                                <div class="modal fade" id="staticBackdrop{{complain.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                    <div class=" modal-dialog modal-dialog-centered ">
+                                                        <div class="modal-content ">
+                                                            <div class="modal-body ">
+                                                                <h5 style="color:black " class="modal-title " id="staticBackdropLabel ">Delete!!</h5>
+                                                                <p style="color:black ">Are you sure you want to delete this {{complain}} record?</p>
+                                                                <button type="button " class="btn-close " data-bs-dismiss="modal " aria-label="Close "></button>
+                                                                <div class="button-box ">
+                                                                    <a href="# " type="button " class="btn btn--no " data-bs-dismiss="modal ">No</a>
+                                                                    <a href=" {% url 'complaints:delete_complaint' complaint_id=complain.id %} " type="button " class="btn btn--yes btn-primary ">Yes</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

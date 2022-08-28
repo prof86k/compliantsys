@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest
 from . import froms as fms
 from . import models as mdl
 from accounts import models as acmdl
-
-import complaintsApi
 
 # Create your views here.
 
@@ -27,6 +25,8 @@ def send_complaints(request):
         if form.is_valid():
             new_complaint = form.save(commit=False)
             new_complaint.complainer = request.user
+            department_hod_user = request.user.user_profile.department.department_hod
+            new_complaint.forward_to_user = department_hod_user
             new_complaint.save()
             messages.success(request, 'Sent')
             return redirect('complaints:send_complaints')
@@ -60,7 +60,8 @@ def forward_complaints(request: HttpRequest, complaint_id: int, *args, **kwargs)
             forward_to = form.cleaned_data.get('forward_to')
             user_repond_text = form.cleaned_data.get('user_repond_text')
             if forward_to == 'dean':
-                user = acmdl.User.objects.filter(is_dean=True).first()
+                faculty = complaint.complainer.user_profile.faculty
+                user = acmdl.Dean.objects.filter(faculty=faculty).first().user
             elif forward_to == 'registry':
                 user = acmdl.User.objects.filter(is_registry=True).first()
             else:
@@ -80,63 +81,67 @@ def forward_complaints(request: HttpRequest, complaint_id: int, *args, **kwargs)
         'form': form
     }
     return render(request, 'complaintsApi/forward_complaint.html', context)
+
+
+def view_new_complaint(request: HttpRequest) -> HttpResponse:
+    '''
+    @ view all the newly sent complaints
+    '''
+    new_complaints = mdl.Complaint.current_complaints()
+
+    context = {'new_complaints': new_complaints}
+
+    return render(request, 'complaintsApi/new_complaints.html', context)
+
+
+def view_resolved_complaint(request: HttpRequest) -> HttpResponse:
+    '''
+    @ view all the resolved sent complaints
+    '''
+    resolved_complaints = mdl.Complaint.objects.filter(solve=True).all()
+
+    context = {'resolved_complaints': resolved_complaints}
+
+    return render(request, 'complaintsApi/resolved_complaints.html', context)
 # =================== hod =================
 
 
-def hod_send_message(request):
-    context = {}
-    return render(request, 'complaintsApi/hod/send_message.html', context)
-
-
 def hod_complaints(request):
-    context = {}
+    '''
+    @ list all the complaints sents to hod
+    '''
+    complaints = mdl.Complaint.objects.filter(
+        solve=False, forward_to_user=request.user).all()
+    context = {
+        'complaints': complaints
+    }
     return render(request, 'complaintsApi/hod/complaints.html', context)
-
-
-def hod_complaints_responds(request):
-    context = {}
-    return render(request, 'complaintsApi/hod/complaint_respond.html', context)
 
 # ====================== deans ======================
 
 
-def dean_send_message(request):
-    context = {}
-    return render(request, 'complaintsApi/deans/send_message.html', context)
-
-
 def dean_complaints(request):
-    context = {}
+    ''' 
+    @ list all complaints forwarded to deans of the faculty
+    '''
+    complaints = mdl.Complaint.objects.filter(
+        solve=False, forward=True, forward_to_user=request.user).all()
+    context = {'complaints': complaints}
     return render(request, 'complaintsApi/deans/complaints.html', context)
 
 
-def dean_complaints_responds(request):
-    context = {}
-    return render(request, 'complaintsApi/deans/complaint_respond.html', context)
-
-# ==================== registry ========================
-
-
-def registry_send_message(request):
-    context = {}
-    return render(request, 'complaintsApi/registry/send_message.html', context)
-
+# ==================== registry =======================
 
 def registry_complaints(request):
+    '''
+    @ list all the complaints forwarded to the registry
+    '''
+    complaints = mdl.Complaint.objects.filter(
+        solve=False, forward=True, forward_to_user=request.user).all()
     context = {}
     return render(request, 'complaintsApi/registry/complaints.html', context)
 
-
-def registry_complaints_responds(request):
-    context = {}
-    return render(request, 'complaintsApi/registry/complaint_respond.html', context)
-
 # ======================== students ========================
-
-
-def student_send_message(request):
-    context = {}
-    return render(request, 'complaintsApi/students/send_message.html', context)
 
 
 def my_complaints(request):
@@ -206,8 +211,3 @@ def delete_complaint(request: HttpRequest, complaint_id: int) -> HttpResponse:
     complaint.delete()
     messages.success(request, 'Complaints Deleted Successfully.')
     return redirect('complaints:my_complaints')
-
-
-def student_complaints_responds(request):
-    context = {}
-    return render(request, 'complaintsApi/students/complaint_respond.html', context)

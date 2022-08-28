@@ -23,4 +23,11 @@ urlpatterns = [
          ves.reverse_resolve_complaint, name='reverse_resolve'),
     path('delete-complaint/<int:complaint_id>',
          ves.delete_complaint, name='delete_complaint'),
+    path('new-complaints', ves.view_new_complaint, name='new_complaints'),
+    path('resolved-complaints', ves.view_resolved_complaint,
+         name='resolved_complaints'),
+    path('hod-complaints', ves.hod_complaints, name='hod_complaints'),
+    path('registry-complaints', ves.registry_complaints,
+         name='registry_complaints'),
+    path('dean-complaints', ves.dean_complaints, name='dean_complaints'),
 ]
