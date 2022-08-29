@@ -103,7 +103,7 @@ def view_resolved_complaint(request: HttpRequest) -> HttpResponse:
     context = {'resolved_complaints': resolved_complaints}
 
     return render(request, 'complaintsApi/resolved_complaints.html', context)
-# =================== hod =================
+# =================== hod ======================================================
 
 
 def hod_complaints(request):
@@ -116,7 +116,6 @@ def hod_complaints(request):
         'complaints': complaints
     }
     return render(request, 'complaintsApi/hod/complaints.html', context)
-
 # ====================== deans ======================
 
 
@@ -128,9 +127,8 @@ def dean_complaints(request):
         solve=False, forward=True, forward_to_user=request.user).all()
     context = {'complaints': complaints}
     return render(request, 'complaintsApi/deans/complaints.html', context)
-
-
 # ==================== registry =======================
+
 
 def registry_complaints(request):
     '''
@@ -138,9 +136,8 @@ def registry_complaints(request):
     '''
     complaints = mdl.Complaint.objects.filter(
         solve=False, forward=True, forward_to_user=request.user).all()
-    context = {}
+    context = {'complaints': complaints}
     return render(request, 'complaintsApi/registry/complaints.html', context)
-
 # ======================== students ========================
 
 

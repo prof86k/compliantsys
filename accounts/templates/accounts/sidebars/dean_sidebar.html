@@ -63,9 +63,6 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="{% url 'accounts:create_faculty' %}">Create Faculty</a>
-                            </li>
-                            <li>
                                 <a href="{% url 'accounts:create_department' %}">Create Department</a>
                             </li>
                             <li>
@@ -80,7 +77,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="{% url 'accounts:hod_dashboard' %}">HODs</a>
+                                <a href="{% url 'accounts:hods' %}">HODs</a>
                             </li>
                         </ul>
                     </li>
@@ -91,7 +88,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="menu-lists.html">Complaints Lists</a>
+                                <a href="{% url 'complaints:dean_complaints' %}">Complaints Lists</a>
                             </li>
                         </ul>
                     </li>
