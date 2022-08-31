@@ -3,7 +3,7 @@ from . import views as vi
 
 app_name = 'accounts'
 
-urlpatterns = [
+urlpatterns: list = [
     path('', vi.users_login, name='login'),
     path('logout', vi.log_out_user, name='logout'),
     path('dashboard', vi.dashboard, name='dashboard'),

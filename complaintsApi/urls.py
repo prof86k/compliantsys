@@ -4,7 +4,7 @@ from . import views as ves
 
 app_name = 'complaints'
 
-urlpatterns = [
+urlpatterns: list = [
     path('view-complaints', ves.admin_complaints_responds, name='view_complaints'),
     path('send-complaint', ves.send_complaints, name='send_complaints'),
     path('forward/<int:complaint_id>/complaint',

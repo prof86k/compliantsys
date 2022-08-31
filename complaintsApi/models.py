@@ -83,6 +83,16 @@ class Complaint(models.Model):
         ]
 
     @classmethod
+    def hod_users_new_complaints(cls, user: Any, solve: bool = False) -> list:
+        '''
+            @ list all complaints made to a user category to hod
+        '''
+        return [
+            complaint for complaint in cls.objects.filter(forward_to_user=user, solve=solve, forward=False).all()
+            if (complaint.complainer.user_profile.department == user.user_profile.department) and (complaint.date_updated.date() == datetime.today().date())
+        ]
+
+    @classmethod
     def admin_user_users_complaints(cls, user: Any) -> list:
         '''
             @ list all complaints made to a user category

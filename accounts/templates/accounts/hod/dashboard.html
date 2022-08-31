@@ -20,13 +20,15 @@
                     <div class="media align-items-center static-top-widget">
                         <div class="media-body p-0">
                             <span class="m-0">New Complaints</span>
-                            <h4 class="mb-0 counter">{{new_complains}}
+                            <h4 class="mb-0 counter">{{new_complaints_count}}
                                 <span class="badge badge-light-primary grow">
                                     <i data-feather="trending-up"></i>8.5%</span>
                             </h4>
                         </div>
                         <div class="align-self-center text-center">
-                            <i data-feather="database"></i>
+                            <a href="{% url 'complaints:new_forwarded' %}">
+                                <i data-feather="database"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -38,13 +40,15 @@
                     <div class="media static-top-widget">
                         <div class="media-body p-0">
                             <span class="m-0">Resolved Complaints</span>
-                            <h4 class="mb-0 counter">{{resolved}}
+                            <h4 class="mb-0 counter">{{resolved_complaints}}
                                 <span class="badge badge-light-danger grow">
                                     <i data-feather="trending-down"></i>8.5%</span>
                             </h4>
                         </div>
                         <div class="align-self-center text-center">
-                            <i data-feather="shopping-bag"></i>
+                            <a href="{% url 'complaints:resolved_forwarded' %}">
+                                <i data-feather="shopping-bag"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -74,13 +78,15 @@
                     <div class="media static-top-widget">
                         <div class="media-body p-0">
                             <span class="m-0">Unresolved Complaints</span>
-                            <h4 class="mb-0 counter">{{unresolved}}
+                            <h4 class="mb-0 counter">{{new_complaints_count}}
                                 <span class="badge badge-light-success grow">
                                     <i data-feather="trending-down"></i>8.5%</span>
                             </h4>
                         </div>
                         <div class="align-self-center text-center">
-                            <i data-feather="user-plus"></i>
+                            <a href="{% url 'complaints:new_forwarded' %}">
+                                <i data-feather="user-plus"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -96,7 +102,7 @@
                             <h2>Current Complaints</h2>
                         </div>
                         <div class="col-md-4 col-sm-4 col-lg-4">
-                            <a href="" class="btn btn-sm btn-primary offset-md-6">
+                            <a href="{% url 'complaints:new_forwarded' %}" class="btn btn-sm btn-primary offset-md-6">
                                 <i class="lnr lnr-eye"></i> View All</a>
                         </div>
                     </div>
@@ -125,6 +131,10 @@
                                         <td>
                                             {% if complain.solve %}
                                             <span class="text-success">Resolved</span>
+                                            <!--  -->
+                                            {% elif not complain.solve and complain.forward %}
+                                            <span class="text-info">Forwarded</span> {% else %}
+                                            <span class="text-danger">Unresolved</span>
                                             <!--  -->
                                             {% endif %}
                                         </td>

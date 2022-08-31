@@ -440,18 +440,18 @@ def student_dashboard(request: HttpRequest) -> HttpResponse:
 
 
 def hod_dashboard(request: HttpRequest) -> HttpResponse:
-    complaints = cmdl.Complaint.admin_user_users_complaints(user=request.user)
-    print(complaints)
-    new_complaints_count = cmdl.Complaint.current_model_count()
-    new_complaints = cmdl.Complaint.current_complaints()
+    complaints: list = cmdl.Complaint.admin_user_users_complaints(
+        user=request.user)
+    new_complaints_count: int = cmdl.Complaint.current_model_count()
+    new_complaints: list = cmdl.Complaint.current_complaints()
     paginator = Paginator(new_complaints, 5)
     page_number = request.GET.get('page')
     new_complaints_objs = paginator.get_page(page_number)
-    resolved_complaints = cmdl.Complaint.objects.filter(
-        solve=True
+    resolved_complaints: int = cmdl.Complaint.objects.filter(
+        solve=True, forward_to_user=request.user
     ).count()
     context = {
-        'complaints': complaints,
+        'complaints': len(complaints),
         'resolved_complaints': resolved_complaints,
         'new_complaints_count': new_complaints_count,
         'new_complaints_objs': new_complaints_objs
@@ -460,6 +460,9 @@ def hod_dashboard(request: HttpRequest) -> HttpResponse:
 
 
 def hod_students(request: HttpRequest) -> HttpResponse:
+    '''
+        @ hod student
+    '''
     hod = get_object_or_404(mdl.Hod, user=request.user)
     user_deparmtent = get_object_or_404(mdl.UserProfile, user=hod.user)
     context = {
@@ -494,8 +497,20 @@ def dean_dashboard(request: HttpRequest) -> HttpResponse:
 
 
 def registry_dashbaord(request: HttpRequest) -> HttpResponse:
-    complaints = cmdl.Complaint.admin_user_users_complaints(user=request.user)
+    '''
+        @ registry 
+    '''
+    complaints = cmdl.Complaint.dean_users_complaints(user=request.user)
+    new_forwarded_complaints = cmdl.Complaint.dean_users_new_complaints(
+        user=request.user)
+    forwarded_solved_complaints = cmdl.Complaint.dean_users_new_complaints(
+        user=request.user, solve=True)
+    paginator = Paginator(new_forwarded_complaints, 5)
+    page_number = request.GET.get('page')
+    new_complaints_objs = paginator.get_page(page_number)
     context = {
-        'complaints': complaints
+        'complaints': len(complaints), 'new_complaints_objs': new_complaints_objs,
+        'new_forward_complaints_count': len(new_forwarded_complaints),
+        'forwarded_solved_complaints': len(forwarded_solved_complaints),
     }
     return render(request, 'accounts/registry/dashboard.html', context)
