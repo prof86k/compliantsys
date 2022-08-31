@@ -2,7 +2,7 @@
 <!--  -->
 {% block title %} show users {% endblock title %}
 <!--  -->
-{% block headerTitle %}Users {% endblock headerTitle %}
+{% block headerTitle %}{{user_deparmtent.department|title}}{% endblock headerTitle %}
 <!--  -->
 {% block linkForm %}
 <script>
@@ -46,39 +46,36 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for programme in department.department_programmes.all %}
+                                    {% for programme in user_deparmtent.department.department_programmes.all %}
+                                    <!--  -->
+                                    {% for student in programme.user_programme.all %}
                                     <tr>
                                         <td>
                                             <div class="form-check user-checkbox">
                                                 <input class="checkbox_animated check-it" type="checkbox" value="{{user.id}}" id="flexCheckDefault">
                                             </div>
                                             <span>
-                                                <img src="{{programme.user.profile_picture.url}}" alt="users">
+                                                <img src="{{student.user.user_profile.profile_picture.url}}" alt="users">
                                             </span>
                                         </td>
                                         <td>
                                             <a href="javascript:void(0)">
-                                                <span class="d-block ">{{user}}</span>
+                                                <span class="d-block ">{{student}}</span>
                                             </a>
                                         </td>
-                                        <td>{{user.email}}</td>
+                                        <td>{{student.user.email}}</td>
                                         <td>{{programme}}</td>
                                         <td>
                                             <ul>
                                                 <li>
-                                                    <a href="{% url 'accounts:profile' user_id=user.id %}">
+                                                    <a href="{% url 'accounts:profile' user_id=student.user.id %}">
                                                         <span class="lnr lnr-eye"></span>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="javascript:void(0)">
-                                                        <span class="lnr lnr-pencil"></span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop{{user.id}}" href="javascript:void(0)">
+                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop{{student.user.id}}" href="javascript:void(0)">
                                                         <span class="lnr lnr-trash"></span>
-                                                        <div class="modal fade" id="staticBackdrop{{user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div class="modal fade" id="staticBackdrop{{student.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                             <div class="modal-dialog  modal-dialog-centered">
                                                                 <div class="modal-content">
                                                                     <div class="modal-body">
@@ -98,6 +95,8 @@
                                             </ul>
                                         </td>
                                     </tr>
+                                    {% endfor %}
+                                    <!--  -->
                                     {% endfor %}
                                 </tbody>
                             </table>

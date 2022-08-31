@@ -51,6 +51,8 @@
 
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{% static '/assets/css/responsive.css' %}">
+    <!--  -->
+    {% block statics %} {% endblock statics %}
 </head>
 
 <body style="background-color:#335a5a;">
@@ -90,9 +92,6 @@
             {% include "accounts/sidebars/dean_sidebar.html" %}
             <!--  -->
             {% endif %}
-            <!-- Page Sidebar Ends-->
-            <!-- page title -->
-            <!-- end of page title -->
             <!-- index body start -->
             <div class="page-body">
                 <div class="title-header title-header-1">

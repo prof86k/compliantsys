@@ -64,7 +64,15 @@
                             <span class="offset-md-9 offset-sm-4"><a href="{% url 'complaints:forward' complaint_id=complain.id %}" class="btn btn-warning ">Forward</a></span>
                             <!--  -->
                             {% elif complain.forward %}
-                            <span class="text-info offset-md-9 offset-sm-4">Forwarded</span>
+                            <span class="text-info offset-md-6 offset-sm-4">Forwarded</span> <span>
+                                <i class="lnr lnr-arrow-right"></i> <span class="text-muted"> {% if complain.forward_to_user.is_dean %}
+                                  Dean 
+                                  {% elif complain.forward_to_user.is_registry %}
+                                  Registry 
+                                  {% else %}
+                                  IT Support
+                                {% endif %}</span>
+                            </span>
                             <!--  -->
                             {% endif %} {% else %}
                             <span class="offset-md-6 offset-sm-4"><a href="{% url 'complaints:reverse_resolve' complaint_id=complain.id  %}" class="btn btn-warning ">Reverse Resolve</a></span>

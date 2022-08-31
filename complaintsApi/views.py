@@ -127,6 +127,29 @@ def dean_complaints(request):
         solve=False, forward=True, forward_to_user=request.user).all()
     context = {'complaints': complaints}
     return render(request, 'complaintsApi/deans/complaints.html', context)
+
+
+def new_forwarded_complaints(request: HttpRequest) -> HttpResponse:
+    '''
+        @ view newly forwarded complaints
+    '''
+    new_forwards = mdl.Complaint.dean_users_new_complaints(user=request.user)
+    context = {
+        'new_forwards': new_forwards,
+    }
+    return render(request, 'complaintsApi/deans/new_complaints.html', context)
+
+
+def resolved_forwarded_complaints(request: HttpRequest) -> HttpResponse:
+    '''
+        @ view resolved forwarded complaints
+    '''
+    resolved_forwards = mdl.Complaint.dean_users_new_complaints(
+        user=request.user, solve=True)
+    context = {
+        'resolved_forwards': resolved_forwards,
+    }
+    return render(request, 'complaintsApi/deans/resolved.html', context, status=200)
 # ==================== registry =======================
 
 

@@ -20,13 +20,15 @@
                     <div class="media align-items-center static-top-widget">
                         <div class="media-body p-0">
                             <span class="m-0">New Complaints</span>
-                            <h4 class="mb-0 counter">{{new_complains}}
+                            <h4 class="mb-0 counter">{{new_forward_complaints_count}}
                                 <span class="badge badge-light-primary grow">
                                     <i data-feather="trending-up"></i>8.5%</span>
                             </h4>
                         </div>
                         <div class="align-self-center text-center">
-                            <i data-feather="database"></i>
+                            <a href="{% url 'complaints:new_forwarded' %}">
+                                <i data-feather="database"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -38,13 +40,15 @@
                     <div class="media static-top-widget">
                         <div class="media-body p-0">
                             <span class="m-0">Resolved Complaints</span>
-                            <h4 class="mb-0 counter">{{resolved}}
+                            <h4 class="mb-0 counter">{{forwarded_solved_complaints}}
                                 <span class="badge badge-light-danger grow">
                                     <i data-feather="trending-down"></i>8.5%</span>
                             </h4>
                         </div>
                         <div class="align-self-center text-center">
-                            <i data-feather="shopping-bag"></i>
+                            <a href="{% url 'complaints:resolved_forwarded' %}">
+                                <i data-feather="shopping-bag"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -74,7 +78,7 @@
                     <div class="media static-top-widget">
                         <div class="media-body p-0">
                             <span class="m-0">Unresolved Complaints</span>
-                            <h4 class="mb-0 counter">{{unresolved}}
+                            <h4 class="mb-0 counter">{{new_forward_complaints_count}}
                                 <span class="badge badge-light-success grow">
                                     <i data-feather="trending-down"></i>8.5%</span>
                             </h4>
@@ -86,9 +90,109 @@
                 </div>
             </div>
         </div>
-        <!-- chart caard section End -->
-        <!-- Transactions start-->
-        <!-- Browser States end-->
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-8 col-sm-8 col-lg-8">
+                            <h2>Current Complaints</h2>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-lg-4">
+                            <a href="{% url 'complaints:new_forwarded' %}" class="btn btn-sm btn-primary offset-md-6">
+                                <i class="lnr lnr-eye"></i> View All</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="table-responsive table-desi">
+                            <table class="user-table table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Title</th>
+                                        <th>Complainer</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for complain in new_complaints_objs %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{complain.title|title}}</td>
+                                        <td>{{complain.complainer|upper}}</td>
+                                        <td>{{complain.description| truncatechars:10 | safe}}</td>
+                                        <td>
+                                            {% if complain.solve %}
+                                            <span class="text-success">Resolved</span>
+                                            <!--  -->
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <ul>
+                                                <li>
+                                                    <a href="{% url 'complaints:veiw_complain' complain_id=complain.id %}" data-toggle="tooltip" data-placement="top" title="View Complaint Details">
+                                                        <span class="lnr lnr-eye"></span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop{{complain.id}}" href="#" data-toggle="tooltip" data-placement="top" title="Erase This Record">
+                                                        <span class="lnr lnr-trash"></span>
+                                                        <div class="modal fade" id="staticBackdrop{{complain.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                            <div class="modal-dialog  modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-body">
+                                                                        <h5 style="color:black" class="modal-title" id="staticBackdropLabel">Delete!!</h5>
+                                                                        <p style="color:black">Are you sure you want to delete this record?</p>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        <div class="button-box">
+                                                                            <a href="#" type="button" class="btn btn--no " data-bs-dismiss="modal">No</a>
+                                                                            <a href="{% url 'complaints:delete_complaint' complaint_id=complain.id %}" type="button" class="btn  btn--yes btn-primary">Yes</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination-box">
+                    <nav class="ms-auto me-auto " aria-label="...">
+                        <ul class="pagination pagination-primary">
+                            {% if new_complaints_objs.has_previous %}
+                            <li class="page-item ">
+                                <a class="page-link" href="?page={{new_complaints_objs.previous_page_number}}">Previous</a>
+                            </li>
+                            {% endif %}
+                            <!--  -->
+                            <li class="page-item">
+                                <a class="page-link">{{new_complaints_objs.number}} of {{new_complaints_objs.paginator.num_pages}}</a>
+                            </li>
+                            {% if new_complaints_objs.has_next %}
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{new_complaints_objs.next_page_number}}">Next </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{new_complaints_objs.paginator.num_pages}}"> Last &laquo;</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock content %}

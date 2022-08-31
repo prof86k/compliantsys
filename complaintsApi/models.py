@@ -1,3 +1,4 @@
+from typing import Any
 from django.db import models
 from datetime import datetime
 from accounts import models as acmdl
@@ -6,6 +7,9 @@ from accounts import models as acmdl
 
 
 class Complaint(models.Model):
+    '''
+        @ compliants of a user
+    '''
     complainer = models.ForeignKey(
         acmdl.User, on_delete=models.PROTECT, related_name='user_complaints')
     title = models.CharField(verbose_name='Title:',
@@ -27,8 +31,10 @@ class Complaint(models.Model):
         return f'{self.title}'
 
     @classmethod
-    def current_model_count(cls):
-        '''return the number of complaints made today by all users'''
+    def current_model_count(cls) -> int:
+        '''
+            @ return the number of complaints made today by all users
+        '''
         return len([
             complaint
             for complaint in cls.objects.filter(solve=False).all()
@@ -36,16 +42,49 @@ class Complaint(models.Model):
         ])
 
     @classmethod
-    def current_complaints(cls):
-        '''return all the current complaints'''
-        return cls.objects.filter(solve=False, date_updated=datetime.today().date()).all()
-        # if complaint.date_updated.date() == datetime.today().date()
+    def current_complaints(cls) -> list:
+        '''
+            @ return all the current complaints
+        '''
+        return [
+            complaint for complaint in cls.objects.filter(solve=False).all()
+            if complaint.date_updated.date() == datetime.today().date()
+        ]
 
     @classmethod
-    def user_current_model_count(cls, user):
-        '''return the number of complaints made by a particular user'''
+    def user_current_model_count(cls, user: Any) -> int:
+        '''
+            @ return the number of complaints made by a particular user
+        '''
         return len([
             complaint
             for complaint in cls.objects.filter(complainer=user).all()
             if complaint.date_updated.date() == datetime.today().date()
         ])
+
+    @classmethod
+    def dean_users_complaints(cls, user: Any) -> list:
+        '''
+            @ list all complaints made to a user category to dean
+        '''
+        return [
+            complaint for complaint in cls.objects.filter(forward_to_user=user).all()
+            if complaint.complainer.user_profile.faculty == user.user_profile.faculty
+        ]
+
+    @classmethod
+    def dean_users_new_complaints(cls, user: Any, solve: bool = False) -> list:
+        '''
+            @ list all complaints made to a user category to dean
+        '''
+        return [
+            complaint for complaint in cls.objects.filter(forward_to_user=user, solve=solve, forward=True).all()
+            if (complaint.complainer.user_profile.faculty == user.user_profile.faculty) and (complaint.date_updated.date() == datetime.today().date())
+        ]
+
+    @classmethod
+    def admin_user_users_complaints(cls, user: Any) -> list:
+        '''
+            @ list all complaints made to a user category
+        '''
+        return cls.objects.filter(forward_to_user=user).all()

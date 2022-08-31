@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.contrib import messages
+from django.core.paginator import Paginator
 from . import forms as fms
 from . import models as mdl
 from complaintsApi import models as cmdl
@@ -58,14 +59,19 @@ def log_out_user(request: HttpRequest) -> HttpResponse:
 def dashboard(request: HttpRequest) -> HttpResponse:
     users = mdl.User.objects.count()
     complaints = cmdl.Complaint.objects.count()
-    new_complaints = cmdl.Complaint.current_model_count()
+    new_complaints_count = cmdl.Complaint.current_model_count()
+    new_complaints = cmdl.Complaint.current_complaints()
+    paginator = Paginator(new_complaints, 1)
+    page_number = request.GET.get('page')
+    new_complaints_objs = paginator.get_page(page_number)
     resolved_complaints = cmdl.Complaint.objects.filter(
         solve=True
     ).count()
     context = {
         'users': users, 'complaints': complaints,
         'resolved_complaints': resolved_complaints,
-        'new_complaints': new_complaints
+        'new_complaints_count': new_complaints_count,
+        'new_complaints_objs': new_complaints_objs
     }
     return render(request, 'accounts/admins/dashboard.html', context)
 
@@ -243,13 +249,6 @@ def database_models_query(model, user):
     return results
 
 
-def ajax_programmes_upload(request: HttpRequest) -> JsonResponse:
-    if request.is_ajax():
-        pass
-    context = {}
-    return JsonResponse()
-
-
 def create_user(request: HttpRequest) -> HttpResponse:
     users = mdl.User.objects.order_by('-date_joined').all()
     if request.method == "POST":
@@ -280,13 +279,6 @@ def create_user(request: HttpRequest) -> HttpResponse:
         form = fms.CreateNewUserForm()
     context = {'form': form, 'users': users}
     return render(request, 'accounts/components/create_user.html', context)
-
-
-def ajax_user_upload(request: HttpRequest) -> JsonResponse:
-    if request.is_ajax():
-        pass
-    context = {}
-    return JsonResponse
 
 
 def show_all_users(request: HttpRequest) -> HttpResponse:
@@ -448,21 +440,31 @@ def student_dashboard(request: HttpRequest) -> HttpResponse:
 
 
 def hod_dashboard(request: HttpRequest) -> HttpResponse:
-    context = {}
+    complaints = cmdl.Complaint.admin_user_users_complaints(user=request.user)
+    print(complaints)
+    new_complaints_count = cmdl.Complaint.current_model_count()
+    new_complaints = cmdl.Complaint.current_complaints()
+    paginator = Paginator(new_complaints, 5)
+    page_number = request.GET.get('page')
+    new_complaints_objs = paginator.get_page(page_number)
+    resolved_complaints = cmdl.Complaint.objects.filter(
+        solve=True
+    ).count()
+    context = {
+        'complaints': complaints,
+        'resolved_complaints': resolved_complaints,
+        'new_complaints_count': new_complaints_count,
+        'new_complaints_objs': new_complaints_objs
+    }
     return render(request, 'accounts/hod/dashboard.html', context)
-
-
-def hod_add_student(request: HttpRequest) -> HttpResponse:
-    context = {}
-    return render(request, 'accounts/hod/add_student.html', context)
 
 
 def hod_students(request: HttpRequest) -> HttpResponse:
     hod = get_object_or_404(mdl.Hod, user=request.user)
-    department = get_object_or_404(mdl.Department, user=hod.user)
+    user_deparmtent = get_object_or_404(mdl.UserProfile, user=hod.user)
     context = {
         'hod': hod,
-        'department': department,
+        'user_deparmtent': user_deparmtent,
     }
     return render(request, 'accounts/hod/students.html', context)
 
@@ -470,12 +472,30 @@ def hod_students(request: HttpRequest) -> HttpResponse:
 
 
 def dean_dashboard(request: HttpRequest) -> HttpResponse:
-    context = {}
+    '''
+        @ deans dashboard
+    '''
+    complaints = cmdl.Complaint.dean_users_complaints(user=request.user)
+    new_forwarded_complaints = cmdl.Complaint.dean_users_new_complaints(
+        user=request.user)
+    forwarded_solved_complaints = cmdl.Complaint.dean_users_new_complaints(
+        user=request.user, solve=True)
+    paginator = Paginator(new_forwarded_complaints, 5)
+    page_number = request.GET.get('page')
+    new_complaints_objs = paginator.get_page(page_number)
+    context = {
+        'complaints': len(complaints), 'new_complaints_objs': new_complaints_objs,
+        'new_forward_complaints_count': len(new_forwarded_complaints),
+        'forwarded_solved_complaints': len(forwarded_solved_complaints),
+    }
     return render(request, 'accounts/dean/dashboard.html', context)
 
 # ======================== registry site ==================================
 
 
 def registry_dashbaord(request: HttpRequest) -> HttpResponse:
-    context = {}
+    complaints = cmdl.Complaint.admin_user_users_complaints(user=request.user)
+    context = {
+        'complaints': complaints
+    }
     return render(request, 'accounts/registry/dashboard.html', context)

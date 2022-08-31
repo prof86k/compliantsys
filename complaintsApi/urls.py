@@ -30,4 +30,8 @@ urlpatterns = [
     path('registry-complaints', ves.registry_complaints,
          name='registry_complaints'),
     path('dean-complaints', ves.dean_complaints, name='dean_complaints'),
+    path('new-forwarded/complaints',
+         ves.new_forwarded_complaints, name='new_forwarded'),
+    path('resolved-forwarded/complaints',
+         ves.resolved_forwarded_complaints, name='resolved_forwarded'),
 ]

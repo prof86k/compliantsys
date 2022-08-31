@@ -34,7 +34,7 @@ urlpatterns = [
     path('student/dashboard', vi.student_dashboard, name='student_dashboard'),
     # ============================== HOD option ==================================================
     path('hod/dashboard', vi.hod_dashboard, name='hod_dashboard'),
-    path('hod/add-student', vi.hod_add_student, name='hod_add_student'),
+    #     path('hod/add-student', vi.hod_add_student, name='hod_add_student'),
     path('student', vi.hod_students, name='hod_students'),
     # ============================== Dean Option =================================================
     path('dean/dashboard', vi.dean_dashboard, name='dean_dashboard'),
