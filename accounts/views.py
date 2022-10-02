@@ -416,7 +416,7 @@ def delete_department(request: HttpRequest, department_id: int) -> HttpResponse:
 
 
 def student_dashboard(request: HttpRequest) -> HttpResponse:
-    if get_object_or_404(mdl.Student, user=request.user):
+    if get_object_or_404(mdl.User, username=request.user):
         complaints = cmdl.Complaint.objects.filter(
             complainer=request.user).count()
         current_complaints = cmdl.Complaint.user_current_model_count(
